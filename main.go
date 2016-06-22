@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/danielkermode/gosocket/chat"
 	"log"
 	"net/http"
-
-	"github.com/danielkermode/gosocket/chat"
+	"os"
 )
 
 func main() {
@@ -17,5 +17,10 @@ func main() {
 	// static files
 	http.Handle("/", http.FileServer(http.Dir("public")))
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
