@@ -12,5 +12,5 @@
 	"rootPath": "github.com/danielkermode/gosocket",
 	"heroku": {
 	  "goVersion": "go1.6.2"
-  },
+  }
 }
