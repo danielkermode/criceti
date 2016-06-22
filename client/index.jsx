@@ -4,9 +4,10 @@ import { App } from './components/app';
 
 const reactRoot = document.getElementById('app');
 
-var sock = null;
-var wsuri = location.protocol.replace("http","ws") + "//" + location.host + "/entry";
-var messages = []
+let sock = null;
+const wsuri = location.protocol.replace("http","ws") + "//" + location.host + "/entry";
+let messages = [];
+let sockId;
 
 window.onload = function() {
   console.log('onload');
@@ -23,9 +24,26 @@ window.onload = function() {
 
   sock.onmessage = function(e) {
     console.log('message received: ' + e.data);
-    messages.push(JSON.parse(e.data));
+    const served = JSON.parse(e.data)
+    switch(served.Type) {
+      case 'chat':
+        messages.push({ id: served.Id, message: 'says ' + served.Data });
+        break;
+      case 'connect':
+        messages.push({ id: served.Id, message: 'has connected.' });
+        break;
+      case 'disconnect':
+        messages.push({ id: served.Id, message: 'has disconnected.' });
+        break;
+      case 'setId':
+        sockId = served.Id;
+        break;
+      default:
+        console.warn('No specified action for message type ' + served.Type);
+    }
+
     ReactDOM.render(
-      <App sock={sock} messages={messages}/>,
+      <App sock={sock} messages={messages} sockId={sockId}/>,
       reactRoot
     );
   }

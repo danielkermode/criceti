@@ -70,6 +70,7 @@
 	var sock = null;
 	var wsuri = location.protocol.replace("http", "ws") + "//" + location.host + "/entry";
 	var messages = [];
+	var sockId = void 0;
 
 	window.onload = function () {
 	  console.log('onload');
@@ -86,8 +87,25 @@
 
 	  sock.onmessage = function (e) {
 	    console.log('message received: ' + e.data);
-	    messages.push(JSON.parse(e.data));
-	    _reactDom2.default.render(_react2.default.createElement(_app.App, { sock: sock, messages: messages }), reactRoot);
+	    var served = JSON.parse(e.data);
+	    switch (served.Type) {
+	      case 'chat':
+	        messages.push({ id: served.Id, message: 'says ' + served.Data });
+	        break;
+	      case 'connect':
+	        messages.push({ id: served.Id, message: 'has connected.' });
+	        break;
+	      case 'disconnect':
+	        messages.push({ id: served.Id, message: 'has disconnected.' });
+	        break;
+	      case 'setId':
+	        sockId = served.Id;
+	        break;
+	      default:
+	        console.warn('No specified action for message type ' + served.Type);
+	    }
+
+	    _reactDom2.default.render(_react2.default.createElement(_app.App, { sock: sock, messages: messages, sockId: sockId }), reactRoot);
 	  };
 
 	  _reactDom2.default.render(_react2.default.createElement(_app.App, { sock: sock }), reactRoot);
@@ -20009,6 +20027,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _canvas = __webpack_require__(166);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20027,13 +20047,21 @@
 
 	    _this.sendMessage = function () {
 	      _this.props.sock.send(JSON.stringify({
-	        Id: 'anon',
-	        data: _this.state.message
+	        id: _this.props.sockId,
+	        data: _this.state.message,
+	        type: 'chat'
 	      }));
 	    };
 
 	    _this.handleChange = function (e) {
 	      _this.setState({ message: e.target.value });
+	    };
+
+	    _this.onEnter = function (e) {
+	      if (e.keyCode === 13) {
+	        // 13 is enter
+	        _this.sendMessage();
+	      }
 	    };
 
 	    _this.state = {
@@ -20051,8 +20079,9 @@
 	        _react2.default.createElement(
 	          'h1',
 	          null,
-	          'WebSocket Echo Test'
+	          'Criceti'
 	        ),
+	        _react2.default.createElement(_canvas.Canvas, null),
 	        _react2.default.createElement(
 	          'p',
 	          null,
@@ -20069,16 +20098,12 @@
 	            'div',
 	            null,
 	            _react2.default.createElement(
-	              'span',
+	              'b',
 	              null,
-	              message.Id,
-	              ' says: '
+	              message.id
 	            ),
-	            _react2.default.createElement(
-	              'span',
-	              null,
-	              message.Data
-	            )
+	            ' ',
+	            message.message
 	          );
 	        })
 	      );
@@ -20088,9 +20113,75 @@
 	  return App;
 	}(_react.Component);
 
-	App.propTypes = {
-	  userCount: _react.PropTypes.number
-	};
+	App.propTypes = {};
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Canvas = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(35);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Canvas = exports.Canvas = function (_Component) {
+	  _inherits(Canvas, _Component);
+
+	  function Canvas(props) {
+	    _classCallCheck(this, Canvas);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Canvas).call(this, props));
+
+	    _this.state = {
+	      message: ''
+	    };
+	    return _this;
+	  }
+
+	  _createClass(Canvas, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var canvas = _reactDom2.default.findDOMNode(this.refs.myCanvas);
+	      var ctx = canvas.getContext('2d');
+
+	      ctx.fillStyle = 'rgb(200,0,0)';
+	      ctx.fillRect(10, 10, 55, 50);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('canvas', { ref: 'myCanvas', style: {
+	          border: '1px solid #000000',
+	          width: '100%',
+	          height: '200px'
+	        } });
+	    }
+	  }]);
+
+	  return Canvas;
+	}(_react.Component);
+
+	Canvas.propTypes = {};
 
 /***/ }
 /******/ ]);

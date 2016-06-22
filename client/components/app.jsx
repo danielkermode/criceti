@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
+import { Canvas } from './canvas'
 
 export class App extends Component {
 
   static propTypes = {
-    userCount: PropTypes.number
+
   };
 
   constructor(props) {
@@ -15,8 +16,9 @@ export class App extends Component {
 
   sendMessage = () => {
     this.props.sock.send(JSON.stringify({
-      Id: 'anon',
-      data: this.state.message
+      id: this.props.sockId,
+      data: this.state.message,
+      type: 'chat'
     }));
   };
 
@@ -24,22 +26,27 @@ export class App extends Component {
     this.setState({ message: e.target.value });
   };
 
+  onEnter = (e) => {
+    if (e.keyCode === 13) {
+      // 13 is enter
+      this.sendMessage();
+    }
+  };
+
   render() {
     return (
       <div>
-      <h1>WebSocket Echo Test</h1>
-        <p>
-          Message: <input onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter your name" />
-        </p>
-      <button onClick={this.sendMessage}>Send Message</button>
-      {this.props.messages &&
-        this.props.messages.map(message => {
-          return (<div>
-              <span>{message.Id} says: </span>
-              <span>{message.Data}</span>
-            </div>)
-        })
-      }
+        <h1>Criceti</h1>
+          <Canvas />
+          <p>
+            Message: <input onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter your name" />
+          </p>
+        <button onClick={this.sendMessage}>Send Message</button>
+        {this.props.messages &&
+          this.props.messages.map(message => {
+            return (<div><b>{message.id}</b> {message.message}</div>)
+          })
+        }
       </div>
     );
   }

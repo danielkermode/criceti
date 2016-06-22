@@ -1,10 +1,10 @@
 package chat
 
 import (
+	"golang.org/x/net/websocket"
 	"log"
 	"net/http"
-
-	"golang.org/x/net/websocket"
+	"strconv"
 )
 
 // Chat server.
@@ -103,11 +103,18 @@ func (s *Server) Listen() {
 			log.Println("Added new client")
 			s.clients[c.id] = c
 			log.Println("Now", len(s.clients), "clients connected.")
-			s.sendPastMessages(c)
+			msg := &Message{strconv.Itoa(c.id), "", "connect"}
+			log.Println("Send all:", msg)
+			s.sendAll(msg)
+			c.Write(&Message{strconv.Itoa(c.id), "", "setId"})
+			//s.sendPastMessages(c)
 
 		// del a client
 		case c := <-s.delCh:
 			log.Println("Delete client")
+			msg := &Message{strconv.Itoa(c.id), "", "disconnect"}
+			log.Println("Send all:", msg)
+			s.sendAll(msg)
 			delete(s.clients, c.id)
 
 		// broadcast message for all clients
