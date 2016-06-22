@@ -5,7 +5,7 @@ import { App } from './components/app';
 const reactRoot = document.getElementById('app');
 
 var sock = null;
-var wsuri = 'ws://localhost:8080/entry';
+var wsuri = location.protocol.replace("http","ws") + "//" + location.host + "/entry";
 var messages = []
 
 window.onload = function() {
