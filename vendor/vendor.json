@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "likOl7O0BJntqagR050kkOBuY4o=",
+			"path": "golang.org/x/net/websocket",
+			"revision": "bc3663df0ac92f928d419e31e0d2af22e683a5a2",
+			"revisionTime": "2016-06-21T20:48:10Z"
+		}
+	],
+	"rootPath": "github.com/danielkermode/gosocket"
+}
