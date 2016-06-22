@@ -68,7 +68,7 @@
 	var reactRoot = document.getElementById('app');
 
 	var sock = null;
-	var wsuri = 'ws://localhost:8080/entry';
+	var wsuri = location.protocol.replace("http", "ws") + "//" + location.host + "/entry";
 	var messages = [];
 
 	window.onload = function () {
@@ -20072,7 +20072,7 @@
 	              'span',
 	              null,
 	              message.Id,
-	              ': '
+	              ' says: '
 	            ),
 	            _react2.default.createElement(
 	              'span',
