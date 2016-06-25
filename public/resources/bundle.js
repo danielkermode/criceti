@@ -63,19 +63,23 @@
 
 	var _app = __webpack_require__(165);
 
-	var _reconnectingWebsocketMin = __webpack_require__(167);
+	var _reconnectingWebsocketMin = __webpack_require__(168);
 
 	var _reconnectingWebsocketMin2 = _interopRequireDefault(_reconnectingWebsocketMin);
+
+	var _hamster = __webpack_require__(167);
+
+	var _hamster2 = _interopRequireDefault(_hamster);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var reactRoot = document.getElementById('app');
-
-	var sock = null;
 	var wsuri = location.protocol.replace("http", "ws") + "//" + location.host + "/entry";
-	var messages = [];
+	var hamsters = {};
 	var sockId = void 0,
 	    username = void 0;
+	var messages = [];
+	var sock = null;
 
 	window.onload = function () {
 	  console.log('onload');
@@ -91,20 +95,33 @@
 	  };
 
 	  sock.onmessage = function (e) {
-	    console.log('message received: ' + e.data);
+	    console.log(e.data);
 	    var served = JSON.parse(e.data);
 	    switch (served.Type) {
 	      case 'username':
 	        username = served.Data;
+	        sock.send(JSON.stringify({
+	          id: username,
+	          data: '{ "x": 0, "y": 0 }',
+	          type: 'move'
+	        }));
 	        break;
 	      case 'chat':
-	        messages.push({ id: served.Data, message: 'says ' + served.Data });
+	        messages.push({ id: served.Id, message: 'says ' + served.Data });
 	        break;
 	      case 'connect':
 	        messages.push({ id: served.Data, message: 'has connected.' });
+	        if (hamsters[username]) {
+	          sock.send(JSON.stringify({
+	            id: username,
+	            data: '{ "x": ' + hamsters[username].x + ', "y": ' + hamsters[username].y + '}',
+	            type: 'move'
+	          }));
+	        }
 	        break;
 	      case 'disconnect':
 	        messages.push({ id: served.Data, message: 'has disconnected.' });
+	        delete hamsters[served.Data];
 	        break;
 	      case 'setId':
 	        sockId = served.Id;
@@ -114,11 +131,22 @@
 	          type: 'username'
 	        }));
 	        break;
+	      case 'move':
+	        var coords = JSON.parse(served.Data);
+	        if (!hamsters[served.Id] && served.Data) {
+	          var hamUrl = served.Id === username ? '/resources/hamster-yellow-self.png' : '/resources/hamster-yellow.png';
+	          hamsters[served.Id] = new _hamster2.default(served.Id, hamUrl, coords.x, coords.y);
+	        } else {
+	          hamsters[served.Id].x = coords.x;
+	          hamsters[served.Id].y = coords.y;
+	        }
+	        console.log(hamsters);
+	        break;
 	      default:
 	        console.warn('No specified action for message type ' + served.Type);
 	    }
 	    sockId = served.Id;
-	    _reactDom2.default.render(_react2.default.createElement(_app.App, { sock: sock, messages: messages, sockId: sockId }), reactRoot);
+	    _reactDom2.default.render(_react2.default.createElement(_app.App, { sock: sock, messages: messages, hamsters: hamsters, username: username, sockId: sockId }), reactRoot);
 	    // scroll message div to bottom, to see new messages immediately
 	    var elem = document.getElementById('message');
 	    elem.scrollTop = elem.scrollHeight;
@@ -20069,7 +20097,7 @@
 
 	    _this.sendMessage = function () {
 	      _this.props.sock.send(JSON.stringify({
-	        id: _this.props.sockId,
+	        id: _this.props.username,
 	        data: _this.state.message,
 	        type: 'chat'
 	      }));
@@ -20104,9 +20132,16 @@
 	          'Criceti'
 	        ),
 	        _react2.default.createElement(
+	          'div',
+	          null,
+	          'Your hamster is called ',
+	          this.props.username,
+	          '.'
+	        ),
+	        _react2.default.createElement('hr', null),
+	        _react2.default.createElement(
 	          'span',
 	          null,
-	          'Message: ',
 	          _react2.default.createElement('input', { onKeyDown: this.onEnter, onChange: this.handleChange, type: 'text', placeholder: 'Enter message' })
 	        ),
 	        _react2.default.createElement(
@@ -20132,7 +20167,7 @@
 	            );
 	          })
 	        ),
-	        _react2.default.createElement(_canvas.Canvas, null)
+	        _react2.default.createElement(_canvas.Canvas, { sock: this.props.sock, hamsters: this.props.hamsters, username: this.props.username })
 	      );
 	    }
 	  }]);
@@ -20163,6 +20198,10 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
+	var _hamster = __webpack_require__(167);
+
+	var _hamster2 = _interopRequireDefault(_hamster);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20180,7 +20219,8 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Canvas).call(this, props));
 
 	    _this.state = {
-	      message: ''
+	      ctx: null,
+	      canvas: null
 	    };
 	    return _this;
 	  }
@@ -20188,12 +20228,56 @@
 	  _createClass(Canvas, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
+	      var _this2 = this;
+
 	      var canvas = _reactDom2.default.findDOMNode(this.refs.myCanvas);
 	      var ctx = canvas.getContext('2d');
+	      var ham = new _hamster2.default('sddasd', '', 0, 0);
+	      this.setState({ ctx: ctx, canvas: canvas });
+
+	      document.addEventListener("keydown", function (e) {
+	        e = e || window.event;
+	        // clear the canvas
+	        ctx.clearRect(0, 0, canvas.width, canvas.height);
+	        switch (e.keyCode) {
+	          // up arrow
+	          case 38:
+	            ham.y += -6;
+	            break;
+	          // down arrow
+	          case 40:
+	            ham.y += 6;
+	            break;
+	          // left arrow
+	          case 37:
+	            ham.x += -6;
+	            break;
+	          //right arrow
+	          case 39:
+	            ham.x += 6;
+	            break;
+	        }
+	        _this2.props.sock.send(JSON.stringify({
+	          id: _this2.props.username,
+	          data: '{ "x": ' + ham.x + ', "y": ' + ham.y + '}',
+	          type: 'move'
+	        }));
+	      }, false);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this3 = this;
+
+	      if (this.state.ctx && this.state.canvas && this.props.hamsters) {
+	        (function () {
+	          var hams = _this3.props.hamsters;
+	          _this3.state.ctx.clearRect(0, 0, _this3.state.canvas.width, _this3.state.canvas.height);
+	          Object.keys(hams).forEach(function (id) {
+	            hams[id].draw(_this3.state.ctx);
+	          });
+	        })();
+	      }
 	      return _react2.default.createElement('canvas', { ref: 'myCanvas', style: {
 	          border: '1px solid #000000',
 	          width: '600px',
@@ -20209,6 +20293,38 @@
 
 /***/ },
 /* 167 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	function Hamster(name, imgUrl, x, y) {
+	  this.name = name || '';
+	  this.x = x || 0;
+	  this.y = y || 0;
+
+	  var img = new Image(); // Create new img element
+	  img.src = imgUrl;
+	  this.img = img;
+
+	  img.addEventListener("load", function () {
+	    // execute drawImage statements here
+	    // this.draw();
+	  }, false);
+	}
+
+	Hamster.prototype.draw = function (ctx) {
+	  ctx.font = "7px Georgia";
+	  ctx.fillText(this.name, this.x, this.y);
+	  ctx.drawImage(this.img, this.x, this.y);
+	};
+
+	exports.default = Hamster;
+
+/***/ },
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;"use strict";

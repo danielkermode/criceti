@@ -7,8 +7,6 @@ import (
 	"strconv"
 )
 
-var users map[string]bool
-
 // Chat server.
 type Server struct {
 	pattern   string
@@ -19,6 +17,8 @@ type Server struct {
 	sendAllCh chan *Message
 	doneCh    chan bool
 	errCh     chan error
+	users     map[string]bool
+	ids       map[int]string
 }
 
 // Create new chat server.
@@ -30,6 +30,8 @@ func NewServer(pattern string) *Server {
 	sendAllCh := make(chan *Message)
 	doneCh := make(chan bool)
 	errCh := make(chan error)
+	users := make(map[string]bool)
+	ids := make(map[int]string)
 
 	return &Server{
 		pattern,
@@ -40,6 +42,8 @@ func NewServer(pattern string) *Server {
 		sendAllCh,
 		doneCh,
 		errCh,
+		users,
+		ids,
 	}
 }
 
@@ -104,36 +108,42 @@ func (s *Server) Listen() {
 		case c := <-s.addCh:
 			log.Println("Added new client")
 			s.clients[c.id] = c
-			// msg := &Message{strconv.Itoa(c.id), "", "connect"}
-			// log.Println("Send all:", msg)
-			// s.sendAll(msg)
-			// c.Write(&Message{strconv.Itoa(c.id), "", "setId"})
+			c.Write(&Message{strconv.Itoa(c.id), "", "setId"})
 			// s.sendPastMessages(c)
 
 		// del a client
 		case c := <-s.delCh:
 			log.Println("Delete client")
-			msg := &Message{strconv.Itoa(c.id), "", "disconnect"}
+			oldname := s.ids[c.id]
+			msg := &Message{strconv.Itoa(c.id), oldname, "disconnect"}
 			s.sendAll(msg)
+			// delete all server data (*client, id: username, and username: true)
 			delete(s.clients, c.id)
+			delete(s.ids, c.id)
+			delete(s.users, oldname)
 
 		// broadcast message for all clients
 		case msg := <-s.sendAllCh:
-			log.Println("hereee")
-			current := s.clients[strconv.Atoi(msg.Id)]
-			if msg.Type == "username" {
-				if _, ok := users[msg.Data]; !ok {
-					username := msg.Data + "_" + msg.Id
-					current.Write(&Message{msg.Id, username, "username"})
-					cmsg := &Message{msg.Id, username, "connect"}
-					s.sendAll(cmsg)
+			switch msg.Type {
+			case "username":
+				i, _ := strconv.Atoi(msg.Id)
+				current := s.clients[i]
+				username := ""
+				if _, ok := s.users[msg.Data]; ok {
+					// if username exists on the server, set the username to be "username + _id"
+					username = msg.Data + "_" + msg.Id
 				} else {
-					users[msg.Data] = true
-					c.Write(&Message{msg.Id, msg.Data, "username"})
-					cmsg := &Message{msg.Id, username, "connect"}
-					s.sendAll(cmsg)
+					// otherwise send back just username and add it to users on the server
+					username = msg.Data
+					s.users[username] = true
 				}
-			} else {
+				s.ids[i] = username
+				current.Write(&Message{msg.Id, username, "username"})
+				// send a "connected" message to all sockets
+				cmsg := &Message{msg.Id, username, "connect"}
+				s.sendAll(cmsg)
+			default:
+				//echo the message to all sockets
 				s.messages = append(s.messages, msg)
 				s.sendAll(msg)
 			}
