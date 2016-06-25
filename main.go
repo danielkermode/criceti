@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/danielkermode/criceti/chat"
-	"github.com/danielkermode/criceti/gzip"
 	"log"
 	"net/http"
 	"os"
@@ -16,7 +15,7 @@ func roomHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/room/anon", http.StatusFound)
 		return
 	}
-	gzip.ServeFile(w, r, "public/room.html")
+	http.ServeFile(w, r, "public/room.html")
 }
 
 func regHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +31,7 @@ func main() {
 	go server.Listen()
 
 	// static files
-	http.Handle("/", gzip.FileServer(http.Dir("public")))
+	http.Handle("/", http.FileServer(http.Dir("public")))
 	http.HandleFunc("/register", regHandler)
 	http.HandleFunc("/room/", roomHandler)
 
