@@ -22,7 +22,7 @@ export class App extends Component {
 
   sendMessage = () => {
     this.props.sock.send(JSON.stringify({
-      id: this.props.sockId,
+      id: this.props.username,
       data: this.state.message,
       type: 'chat'
     }));
@@ -43,8 +43,10 @@ export class App extends Component {
     return (
       <div>
         <h1>Criceti</h1>
+        <div>Your hamster is called {this.props.username}.</div>
+        <hr/>
         <span>
-          Message: <input onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter message" />
+          <input onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter message" />
         </span>
         <button onClick={this.sendMessage}>Send Message</button>
         <hr/>
@@ -55,7 +57,7 @@ export class App extends Component {
             })
           }
         </div>
-        <Canvas />
+        <Canvas sock={this.props.sock} hamsters={this.props.hamsters} username={this.props.username}/>
       </div>
     );
   }

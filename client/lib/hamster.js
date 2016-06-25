@@ -1,16 +1,24 @@
-function Hamster(x, y, img, ctx) {
+function Hamster(name, imgUrl, x, y) {
+  this.name = name || '';
   this.x = x || 0;
   this.y = y || 0;
+
   const img = new Image();   // Create new img element
-  img.addEventListener("load", function() {
+  img.src = imgUrl;
+  this.img = img;
+
+  img.addEventListener("load", () => {
     // execute drawImage statements here
-    ctx.drawImage(img, 0, 0);
+    // this.draw();
   }, false);
-  img.src = '/resources/hamster-yellow.png';
-  this.img = img || '';
+
 }
 
-Hamster.prototype.draw = function() {
-  ctx.fillStyle = this.fill;
-  ctx.fillRect(this.x, this.y, this.w, this.h);
+Hamster.prototype.draw = function(ctx) {
+  ctx.font = "7px Georgia";
+  ctx.fillText(this.name, this.x, this.y);
+  ctx.drawImage(this.img, this.x, this.y);
+
 }
+
+export default Hamster;
