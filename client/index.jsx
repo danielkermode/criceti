@@ -63,15 +63,17 @@ window.onload = function() {
         }));
         break;
       case 'move':
-        const coords = JSON.parse(served.Data);
-        if(!hamsters[served.Id] && served.Data) {
-          const hamUrl = served.Id === username ? '/resources/hamster-yellow-self.png' : '/resources/hamster-yellow.png';
-          hamsters[served.Id] = new Hamster(served.Id, hamUrl, coords.x, coords.y);
-        } else {
-          hamsters[served.Id].x = coords.x;
-          hamsters[served.Id].y = coords.y;
+        if(served.Id) {
+          const coords = JSON.parse(served.Data);
+          if(!hamsters[served.Id] && served.Data) {
+            const hamUrl = served.Id === username ? '/resources/hamster-yellow-self.png' : '/resources/hamster-yellow.png';
+            hamsters[served.Id] = new Hamster(served.Id, hamUrl, coords.x, coords.y);
+          } else {
+            hamsters[served.Id].x = coords.x;
+            hamsters[served.Id].y = coords.y;
+          }
+          console.log(hamsters);
         }
-        console.log(hamsters);
         break;
       default:
         console.warn('No specified action for message type ' + served.Type);

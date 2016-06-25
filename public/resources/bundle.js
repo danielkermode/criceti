@@ -132,15 +132,17 @@
 	        }));
 	        break;
 	      case 'move':
-	        var coords = JSON.parse(served.Data);
-	        if (!hamsters[served.Id] && served.Data) {
-	          var hamUrl = served.Id === username ? '/resources/hamster-yellow-self.png' : '/resources/hamster-yellow.png';
-	          hamsters[served.Id] = new _hamster2.default(served.Id, hamUrl, coords.x, coords.y);
-	        } else {
-	          hamsters[served.Id].x = coords.x;
-	          hamsters[served.Id].y = coords.y;
+	        if (served.Id) {
+	          var coords = JSON.parse(served.Data);
+	          if (!hamsters[served.Id] && served.Data) {
+	            var hamUrl = served.Id === username ? '/resources/hamster-yellow-self.png' : '/resources/hamster-yellow.png';
+	            hamsters[served.Id] = new _hamster2.default(served.Id, hamUrl, coords.x, coords.y);
+	          } else {
+	            hamsters[served.Id].x = coords.x;
+	            hamsters[served.Id].y = coords.y;
+	          }
+	          console.log(hamsters);
 	        }
-	        console.log(hamsters);
 	        break;
 	      default:
 	        console.warn('No specified action for message type ' + served.Type);
