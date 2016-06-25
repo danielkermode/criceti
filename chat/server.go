@@ -120,7 +120,8 @@ func (s *Server) Listen() {
 		// broadcast message for all clients
 		case msg := <-s.sendAllCh:
 			log.Println("hereee")
-			current := s.clients[strconv.Atoi(msg.Id)]
+			i, _ := strconv.Atoi(msg.Id)
+			current := s.clients[i]
 			if msg.Type == "username" {
 				if _, ok := users[msg.Data]; !ok {
 					username := msg.Data + "_" + msg.Id
@@ -128,8 +129,9 @@ func (s *Server) Listen() {
 					cmsg := &Message{msg.Id, username, "connect"}
 					s.sendAll(cmsg)
 				} else {
+					username := msg.Data
 					users[msg.Data] = true
-					c.Write(&Message{msg.Id, msg.Data, "username"})
+					current.Write(&Message{msg.Id, msg.Data, "username"})
 					cmsg := &Message{msg.Id, username, "connect"}
 					s.sendAll(cmsg)
 				}
