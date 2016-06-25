@@ -5,15 +5,13 @@ import ReconnectingWebSocket from './lib/reconnecting-websocket.min.js';
 import Hamster from './lib/hamster';
 
 const reactRoot = document.getElementById('app');
-const wsuri = location.protocol.replace("http","ws") + "//" + location.host + "/entry";
+const wsuri = location.protocol.replace("http", "ws") + "//" + location.host + "/entry";
 const hamsters = {};
 let sockId, username;
 let messages = [];
 let sock = null;
 
 window.onload = function() {
-  console.log('onload');
-
   sock = new ReconnectingWebSocket(wsuri);
 
   sock.onopen = function() {
@@ -26,7 +24,6 @@ window.onload = function() {
   }
 
   sock.onmessage = function(e) {
-    console.log(e.data)
     const served = JSON.parse(e.data)
     switch(served.Type) {
       case 'username':
@@ -72,7 +69,6 @@ window.onload = function() {
             hamsters[served.Id].x = coords.x;
             hamsters[served.Id].y = coords.y;
           }
-          console.log(hamsters);
         }
         break;
       default:

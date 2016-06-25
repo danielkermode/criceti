@@ -52,10 +52,6 @@ export class Canvas extends Component {
     }, false);
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-  }
-
   render() {
     if(this.state.ctx && this.state.canvas && this.props.hamsters) {
       const hams = this.props.hamsters;
