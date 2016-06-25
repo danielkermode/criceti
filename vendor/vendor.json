@@ -6,10 +6,10 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "wzXb6hGdF1kCsoqbvWT5yum/iJg=",
+			"checksumSHA1": "oNEQ9k+7PdtmYyrSRgdb0cpGwEU=",
 			"path": "github.com/danielkermode/criceti/chat",
-			"revision": "3bcb13ea866d3e77508727d4ca4307606f561b76",
-			"revisionTime": "2016-06-25T07:27:55Z"
+			"revision": "8fbc137c4b17df0154287e8eb25a08d2626df2df",
+			"revisionTime": "2016-06-25T11:46:46Z"
 		},
 		{
 			"checksumSHA1": "likOl7O0BJntqagR050kkOBuY4o=",
