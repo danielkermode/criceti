@@ -9,3 +9,5 @@ A hamster chat room.
 ```$ criceti```. A server will be running at localhost:3000.
 
 To build the client, ```$ cd client && npm i && npm run build```
+
+WIP.
