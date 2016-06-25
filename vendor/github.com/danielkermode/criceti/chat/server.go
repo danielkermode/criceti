@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+var users map[string]bool
+
 // Chat server.
 type Server struct {
 	pattern   string
@@ -102,27 +104,38 @@ func (s *Server) Listen() {
 		case c := <-s.addCh:
 			log.Println("Added new client")
 			s.clients[c.id] = c
-			log.Println("Now", len(s.clients), "clients connected.")
-			msg := &Message{strconv.Itoa(c.id), "", "connect"}
-			log.Println("Send all:", msg)
-			s.sendAll(msg)
-			c.Write(&Message{strconv.Itoa(c.id), "", "setId"})
-			//s.sendPastMessages(c)
+			// msg := &Message{strconv.Itoa(c.id), "", "connect"}
+			// log.Println("Send all:", msg)
+			// s.sendAll(msg)
+			// c.Write(&Message{strconv.Itoa(c.id), "", "setId"})
+			// s.sendPastMessages(c)
 
 		// del a client
 		case c := <-s.delCh:
 			log.Println("Delete client")
 			msg := &Message{strconv.Itoa(c.id), "", "disconnect"}
-			log.Println("Send all:", msg)
 			s.sendAll(msg)
 			delete(s.clients, c.id)
 
 		// broadcast message for all clients
 		case msg := <-s.sendAllCh:
-			log.Println("Send all:", msg)
-			s.messages = append(s.messages, msg)
-			s.sendAll(msg)
-
+			log.Println("hereee")
+			if msg.Type == "username" {
+				if _, ok := users[msg.Data]; !ok {
+					username := msg.Data + "_" + strconv.Itoa(c.id)
+					c.Write(&Message{strconv.Itoa(c.id), username, "username"})
+					cmsg := &Message{strconv.Itoa(c.id), username, "connect"}
+					s.sendAll(cmsg)
+				} else {
+					users[msg.Data] = true
+					c.Write(&Message{strconv.Itoa(c.id), msg.Data, "username"})
+					cmsg := &Message{strconv.Itoa(c.id), username, "connect"}
+					s.sendAll(cmsg)
+				}
+			} else {
+				s.messages = append(s.messages, msg)
+				s.sendAll(msg)
+			}
 		case err := <-s.errCh:
 			log.Println("Error:", err.Error())
 
