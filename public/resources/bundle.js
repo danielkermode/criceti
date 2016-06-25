@@ -111,7 +111,7 @@
 	        break;
 	      case 'connect':
 	        messages.push({ id: served.Data, message: 'has connected.' });
-	        if (hamsters[username]) {
+	        if (hamsters[username] && username != served.Data) {
 	          sock.send(JSON.stringify({
 	            id: username,
 	            data: '{ "x": ' + hamsters[username].x + ', "y": ' + hamsters[username].y + '}',
@@ -20237,8 +20237,6 @@
 
 	      document.addEventListener("keydown", function (e) {
 	        e = e || window.event;
-	        // clear the canvas
-	        ctx.clearRect(0, 0, canvas.width, canvas.height);
 	        switch (e.keyCode) {
 	          // up arrow
 	          case 38:
@@ -20263,6 +20261,11 @@
 	          type: 'move'
 	        }));
 	      }, false);
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      console.log(nextProps);
 	    }
 	  }, {
 	    key: 'render',

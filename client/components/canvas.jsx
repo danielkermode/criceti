@@ -25,8 +25,6 @@ export class Canvas extends Component {
 
     document.addEventListener("keydown", (e) => {
       e = e || window.event;
-      // clear the canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
       switch(e.keyCode) {
         // up arrow
         case 38:
@@ -52,6 +50,10 @@ export class Canvas extends Component {
       }));
 
     }, false);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
   }
 
   render() {
