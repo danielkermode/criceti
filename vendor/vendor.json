@@ -1,7 +1,16 @@
 {
 	"comment": "",
+	"heroku": {
+		"goVersion": "go1.6.2"
+	},
 	"ignore": "test",
 	"package": [
+		{
+			"checksumSHA1": "PSvsPX+scLgyGlBH22E6ESkmxvY=",
+			"path": "github.com/danielkermode/criceti/chat",
+			"revision": "eed222f56c98d84e29c248ae81464be7787205b7",
+			"revisionTime": "2016-06-22T05:46:39Z"
+		},
 		{
 			"checksumSHA1": "likOl7O0BJntqagR050kkOBuY4o=",
 			"path": "golang.org/x/net/websocket",
@@ -9,8 +18,5 @@
 			"revisionTime": "2016-06-21T20:48:10Z"
 		}
 	],
-	"rootPath": "github.com/danielkermode/gosocket",
-	"heroku": {
-	  "goVersion": "go1.6.2"
-  }
+	"rootPath": "github.com/danielkermode/gosocket"
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/danielkermode/gosocket/chat"
+	"github.com/danielkermode/criceti/chat"
 	"log"
 	"net/http"
 	"os"
