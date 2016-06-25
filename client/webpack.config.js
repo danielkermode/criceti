@@ -6,7 +6,7 @@ module.exports = {
   './index.jsx' // Your appʼs entry point
   ],
   output: {
-    path: path.normalize(__dirname + '/../public'),
+    path: path.normalize(__dirname + '/../public/resources'),
     filename: 'bundle.js',
     publicPath: '/'
   },

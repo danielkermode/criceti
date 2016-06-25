@@ -63,6 +63,10 @@
 
 	var _app = __webpack_require__(165);
 
+	var _reconnectingWebsocketMin = __webpack_require__(167);
+
+	var _reconnectingWebsocketMin2 = _interopRequireDefault(_reconnectingWebsocketMin);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var reactRoot = document.getElementById('app');
@@ -70,12 +74,13 @@
 	var sock = null;
 	var wsuri = location.protocol.replace("http", "ws") + "//" + location.host + "/entry";
 	var messages = [];
-	var sockId = void 0;
+	var sockId = void 0,
+	    username = void 0;
 
 	window.onload = function () {
 	  console.log('onload');
 
-	  sock = new WebSocket(wsuri);
+	  sock = new _reconnectingWebsocketMin2.default(wsuri);
 
 	  sock.onopen = function () {
 	    console.log('connected to ' + wsuri);
@@ -89,23 +94,34 @@
 	    console.log('message received: ' + e.data);
 	    var served = JSON.parse(e.data);
 	    switch (served.Type) {
+	      case 'username':
+	        username = served.Data;
+	        break;
 	      case 'chat':
-	        messages.push({ id: served.Id, message: 'says ' + served.Data });
+	        messages.push({ id: served.Data, message: 'says ' + served.Data });
 	        break;
 	      case 'connect':
-	        messages.push({ id: served.Id, message: 'has connected.' });
+	        messages.push({ id: served.Data, message: 'has connected.' });
 	        break;
 	      case 'disconnect':
-	        messages.push({ id: served.Id, message: 'has disconnected.' });
+	        messages.push({ id: served.Data, message: 'has disconnected.' });
 	        break;
 	      case 'setId':
 	        sockId = served.Id;
+	        sock.send(JSON.stringify({
+	          id: sockId,
+	          data: location.pathname.split('/').pop(),
+	          type: 'username'
+	        }));
 	        break;
 	      default:
 	        console.warn('No specified action for message type ' + served.Type);
 	    }
-
+	    sockId = served.Id;
 	    _reactDom2.default.render(_react2.default.createElement(_app.App, { sock: sock, messages: messages, sockId: sockId }), reactRoot);
+	    // scroll message div to bottom, to see new messages immediately
+	    var elem = document.getElementById('message');
+	    elem.scrollTop = elem.scrollHeight;
 	  };
 
 	  _reactDom2.default.render(_react2.default.createElement(_app.App, { sock: sock }), reactRoot);
@@ -20037,6 +20053,12 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var messageDiv = {
+	  width: '1000px',
+	  height: '100px',
+	  overflow: 'scroll'
+	};
+
 	var App = exports.App = function (_Component) {
 	  _inherits(App, _Component);
 
@@ -20081,31 +20103,36 @@
 	          null,
 	          'Criceti'
 	        ),
-	        _react2.default.createElement(_canvas.Canvas, null),
 	        _react2.default.createElement(
-	          'p',
+	          'span',
 	          null,
 	          'Message: ',
-	          _react2.default.createElement('input', { onKeyDown: this.onEnter, onChange: this.handleChange, type: 'text', placeholder: 'Enter your name' })
+	          _react2.default.createElement('input', { onKeyDown: this.onEnter, onChange: this.handleChange, type: 'text', placeholder: 'Enter message' })
 	        ),
 	        _react2.default.createElement(
 	          'button',
 	          { onClick: this.sendMessage },
 	          'Send Message'
 	        ),
-	        this.props.messages && this.props.messages.map(function (message) {
-	          return _react2.default.createElement(
-	            'div',
-	            null,
-	            _react2.default.createElement(
-	              'b',
+	        _react2.default.createElement('hr', null),
+	        _react2.default.createElement(
+	          'div',
+	          { id: 'message', style: messageDiv },
+	          this.props.messages && this.props.messages.map(function (message) {
+	            return _react2.default.createElement(
+	              'div',
 	              null,
-	              message.id
-	            ),
-	            ' ',
-	            message.message
-	          );
-	        })
+	              _react2.default.createElement(
+	                'b',
+	                null,
+	                message.id
+	              ),
+	              ' ',
+	              message.message
+	            );
+	          })
+	        ),
+	        _react2.default.createElement(_canvas.Canvas, null)
 	      );
 	    }
 	  }]);
@@ -20163,17 +20190,14 @@
 	    value: function componentDidMount() {
 	      var canvas = _reactDom2.default.findDOMNode(this.refs.myCanvas);
 	      var ctx = canvas.getContext('2d');
-
-	      ctx.fillStyle = 'rgb(200,0,0)';
-	      ctx.fillRect(10, 10, 55, 50);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement('canvas', { ref: 'myCanvas', style: {
 	          border: '1px solid #000000',
-	          width: '100%',
-	          height: '200px'
+	          width: '600px',
+	          height: '300px'
 	        } });
 	    }
 	  }]);
@@ -20182,6 +20206,61 @@
 	}(_react.Component);
 
 	Canvas.propTypes = {};
+
+/***/ },
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;"use strict";
+
+	!function (a, b) {
+	   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (b), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "undefined" != typeof module && module.exports ? module.exports = b() : a.ReconnectingWebSocket = b();
+	}(undefined, function () {
+	  function a(b, c, d) {
+	    function l(a, b) {
+	      var c = document.createEvent("CustomEvent");return c.initCustomEvent(a, !1, !1, b), c;
+	    }var e = { debug: !1, automaticOpen: !0, reconnectInterval: 1e3, maxReconnectInterval: 3e4, reconnectDecay: 1.5, timeoutInterval: 2e3 };d || (d = {});for (var f in e) {
+	      this[f] = "undefined" != typeof d[f] ? d[f] : e[f];
+	    }this.url = b, this.reconnectAttempts = 0, this.readyState = WebSocket.CONNECTING, this.protocol = null;var h,
+	        g = this,
+	        i = !1,
+	        j = !1,
+	        k = document.createElement("div");k.addEventListener("open", function (a) {
+	      g.onopen(a);
+	    }), k.addEventListener("close", function (a) {
+	      g.onclose(a);
+	    }), k.addEventListener("connecting", function (a) {
+	      g.onconnecting(a);
+	    }), k.addEventListener("message", function (a) {
+	      g.onmessage(a);
+	    }), k.addEventListener("error", function (a) {
+	      g.onerror(a);
+	    }), this.addEventListener = k.addEventListener.bind(k), this.removeEventListener = k.removeEventListener.bind(k), this.dispatchEvent = k.dispatchEvent.bind(k), this.open = function (b) {
+	      h = new WebSocket(g.url, c || []), b || k.dispatchEvent(l("connecting")), (g.debug || a.debugAll) && console.debug("ReconnectingWebSocket", "attempt-connect", g.url);var d = h,
+	          e = setTimeout(function () {
+	        (g.debug || a.debugAll) && console.debug("ReconnectingWebSocket", "connection-timeout", g.url), j = !0, d.close(), j = !1;
+	      }, g.timeoutInterval);h.onopen = function () {
+	        clearTimeout(e), (g.debug || a.debugAll) && console.debug("ReconnectingWebSocket", "onopen", g.url), g.protocol = h.protocol, g.readyState = WebSocket.OPEN, g.reconnectAttempts = 0;var d = l("open");d.isReconnect = b, b = !1, k.dispatchEvent(d);
+	      }, h.onclose = function (c) {
+	        if (clearTimeout(e), h = null, i) g.readyState = WebSocket.CLOSED, k.dispatchEvent(l("close"));else {
+	          g.readyState = WebSocket.CONNECTING;var d = l("connecting");d.code = c.code, d.reason = c.reason, d.wasClean = c.wasClean, k.dispatchEvent(d), b || j || ((g.debug || a.debugAll) && console.debug("ReconnectingWebSocket", "onclose", g.url), k.dispatchEvent(l("close")));var e = g.reconnectInterval * Math.pow(g.reconnectDecay, g.reconnectAttempts);setTimeout(function () {
+	            g.reconnectAttempts++, g.open(!0);
+	          }, e > g.maxReconnectInterval ? g.maxReconnectInterval : e);
+	        }
+	      }, h.onmessage = function (b) {
+	        (g.debug || a.debugAll) && console.debug("ReconnectingWebSocket", "onmessage", g.url, b.data);var c = l("message");c.data = b.data, k.dispatchEvent(c);
+	      }, h.onerror = function (b) {
+	        (g.debug || a.debugAll) && console.debug("ReconnectingWebSocket", "onerror", g.url, b), k.dispatchEvent(l("error"));
+	      };
+	    }, 1 == this.automaticOpen && this.open(!1), this.send = function (b) {
+	      if (h) return (g.debug || a.debugAll) && console.debug("ReconnectingWebSocket", "send", g.url, b), h.send(b);throw "INVALID_STATE_ERR : Pausing to reconnect websocket";
+	    }, this.close = function (a, b) {
+	      "undefined" == typeof a && (a = 1e3), i = !0, h && h.close(a, b);
+	    }, this.refresh = function () {
+	      h && h.close();
+	    };
+	  }return a.prototype.onopen = function () {}, a.prototype.onclose = function () {}, a.prototype.onconnecting = function () {}, a.prototype.onmessage = function () {}, a.prototype.onerror = function () {}, a.debugAll = !1, a.CONNECTING = WebSocket.CONNECTING, a.OPEN = WebSocket.OPEN, a.CLOSING = WebSocket.CLOSING, a.CLOSED = WebSocket.CLOSED, a;
+	});
 
 /***/ }
 /******/ ]);

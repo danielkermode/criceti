@@ -18,16 +18,15 @@ export class Canvas extends Component {
     let canvas = ReactDOM.findDOMNode(this.refs.myCanvas);
     let ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = 'rgb(200,0,0)';
-    ctx.fillRect(10, 10, 55, 50);
+
   }
 
   render() {
     return (
       <canvas ref="myCanvas" style={{
         border: '1px solid #000000',
-        width: '100%',
-        height: '200px'
+        width: '600px',
+        height: '300px'
       }}/>
     );
   }
