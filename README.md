@@ -2,10 +2,10 @@
 
 A hamster chat room.
 
-```go get github.com/danielkermode/criceti``` or
+```$ go get github.com/danielkermode/criceti``` or
 
-```git clone``` this repo and ```go install```.
+```$ git clone``` this repo and ```$ go install```.
 
-A server will be running at localhost:3000.
+```$ criceti```. A server will be running at localhost:3000.
 
-To build the client, ```cd client && npm i && npm run build```
+To build the client, ```$ cd client && npm i && npm run build```
