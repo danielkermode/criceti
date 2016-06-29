@@ -31,8 +31,6 @@ export class Canvas extends Component {
           break;
         // down arrow
         case 40:
-          console.log(this.props.bounds.y)
-          console.log(ham.y)
           if(ham.y < this.props.bounds.y) ham.y += 6;
           break;
         // left arrow

@@ -18,6 +18,12 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function sendDummy() {
+  sock.send('DUMMY');
+}
+
+setInterval(sendDummy, 30000);
+
 window.onload = function() {
   sock = new ReconnectingWebSocket(wsuri);
 
@@ -31,25 +37,22 @@ window.onload = function() {
   }
 
   sock.onmessage = function(e) {
-    const served = JSON.parse(e.data)
+    const served = JSON.parse(e.data);
     switch(served.Type) {
       case 'username':
         username = served.Data;
-        if(!hamsters[served.Data]) {
-          sock.send(JSON.stringify({
-            id: username,
-            data: '{ "x": 6, "y": 6 }',
-            type: 'move'
-          }));
-        }
+        sock.send(JSON.stringify({
+          id: username,
+          data: '{ "x": 6, "y": 6 }',
+          type: 'move'
+        }));
         break;
       case 'chat':
         messages.push({ id: served.Id, message: 'says ' + served.Data });
         break;
       case 'connect':
-        if(!hamsters[served.Data]) {
-          messages.push({ id: served.Data, message: 'has connected.' });
-        } else if(hamsters[username] && username === served.Data) {
+        messages.push({ id: served.Data, message: 'has connected.' });
+        if(hamsters[username] && username != served.Data) {
           sock.send(JSON.stringify({
             id: username,
             data: '{ "x": ' + hamsters[username].x + ', "y": ' + hamsters[username].y + '}',
