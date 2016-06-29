@@ -57,7 +57,8 @@ export class App extends Component {
             })
           }
         </div>
-        <Canvas sock={this.props.sock} hamsters={this.props.hamsters} username={this.props.username}/>
+        <Canvas sock={this.props.sock} bounds={this.props.bounds}
+        hamsters={this.props.hamsters} username={this.props.username}/>
       </div>
     );
   }

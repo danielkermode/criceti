@@ -7,9 +7,16 @@ import Hamster from './lib/hamster';
 const reactRoot = document.getElementById('app');
 const wsuri = location.protocol.replace("http", "ws") + "//" + location.host + "/entry";
 const hamsters = {};
+const bounds = { x: 274, y: 132 };
+const startCoods = { x: getRandomInt(0, bounds.x), y: getRandomInt(0, bounds.y) };
+
 let sockId, username;
 let messages = [];
 let sock = null;
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 window.onload = function() {
   sock = new ReconnectingWebSocket(wsuri);
@@ -28,18 +35,21 @@ window.onload = function() {
     switch(served.Type) {
       case 'username':
         username = served.Data;
-        sock.send(JSON.stringify({
-          id: username,
-          data: '{ "x": 0, "y": 0 }',
-          type: 'move'
-        }));
+        if(!hamsters[served.Data]) {
+          sock.send(JSON.stringify({
+            id: username,
+            data: '{ "x": 6, "y": 6 }',
+            type: 'move'
+          }));
+        }
         break;
       case 'chat':
         messages.push({ id: served.Id, message: 'says ' + served.Data });
         break;
       case 'connect':
-        messages.push({ id: served.Data, message: 'has connected.' });
-        if(hamsters[username] && username != served.Data) {
+        if(!hamsters[username]) {
+          messages.push({ id: served.Data, message: 'has connected.' });
+        } else if(hamsters[username] && username != served.Data) {
           sock.send(JSON.stringify({
             id: username,
             data: '{ "x": ' + hamsters[username].x + ', "y": ' + hamsters[username].y + '}',
@@ -63,7 +73,7 @@ window.onload = function() {
         if(served.Id) {
           const coords = JSON.parse(served.Data);
           if(!hamsters[served.Id] && served.Data) {
-            const hamUrl = served.Id === username ? '/resources/hamster-yellow-self.png' : '/resources/hamster-yellow.png';
+            const hamUrl = served.Id === username ? '/resources/hamster-yellow.png' : '/resources/hamster-yellow.png';
             hamsters[served.Id] = new Hamster(served.Id, hamUrl, coords.x, coords.y);
           } else {
             hamsters[served.Id].x = coords.x;
@@ -76,7 +86,7 @@ window.onload = function() {
     }
     sockId = served.Id;
     ReactDOM.render(
-      <App sock={sock} messages={messages} hamsters={hamsters} username={username} sockId={sockId}/>,
+      <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages} hamsters={hamsters} username={username} sockId={sockId}/>,
       reactRoot
     );
     // scroll message div to bottom, to see new messages immediately

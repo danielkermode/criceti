@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import Hamster from '../lib/hamster';
 
-
 export class Canvas extends Component {
 
   static propTypes = {
@@ -20,7 +19,7 @@ export class Canvas extends Component {
   componentDidMount() {
     let canvas = ReactDOM.findDOMNode(this.refs.myCanvas);
     let ctx = canvas.getContext('2d');
-    const ham = new Hamster('sddasd', '', 0, 0);
+    const ham = new Hamster('sddasd', '', 6, 6);
     this.setState({ ctx, canvas });
 
     document.addEventListener("keydown", (e) => {
@@ -28,19 +27,21 @@ export class Canvas extends Component {
       switch(e.keyCode) {
         // up arrow
         case 38:
-          ham.y += -6;
+          if(ham.y > 6) ham.y -= 6;
           break;
         // down arrow
         case 40:
-          ham.y += 6;
+          console.log(this.props.bounds.y)
+          console.log(ham.y)
+          if(ham.y < this.props.bounds.y) ham.y += 6;
           break;
         // left arrow
         case 37:
-          ham.x += -6;
+          if(ham.x > 6) ham.x -= 6;
           break;
         //right arrow
         case 39:
-          ham.x += 6;
+          if(ham.x < this.props.bounds.x) ham.x += 6;
           break;
       }
       this.props.sock.send(JSON.stringify({
@@ -63,8 +64,8 @@ export class Canvas extends Component {
     return (
       <canvas ref="myCanvas" style={{
         border: '1px solid #000000',
-        width: '600px',
-        height: '300px'
+        width: this.props.bounds.x * 5 + 'px',
+        height: this.props.bounds.y * 5  + 'px'
       }}/>
     );
   }

@@ -12,18 +12,20 @@ function Hamster(name, imgUrl, x, y) {
 
 Hamster.prototype.draw = function(ctx) {
   if(this.loaded) {
-    ctx.font = "7px Georgia";
+    ctx.font = "10px Georgia";
     ctx.fillText(this.name, this.x, this.y);
-    ctx.drawImage(this.img, this.x, this.y);
+
+    ctx.drawImage(this.img, this.x, this.y, 14, 15);
   } else {
     this.img.addEventListener("load", () => {
       // execute drawImage statements here
-      ctx.font = "7px Georgia";
+      ctx.imageSmoothingEnabled = false;
+      ctx.font = "10px Georgia";
       ctx.fillText(this.name, this.x, this.y);
-      ctx.drawImage(this.img, this.x, this.y);
+      ctx.drawImage(this.img, this.x, this.y, 14, 15);
       this.loaded = true;
     }, false);
   }
-}
+};
 
 export default Hamster;

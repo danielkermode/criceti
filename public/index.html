@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <title>Criceti</title>
+    <link rel='stylesheet' href='/resources/css/bootstrap.min.css' />
+    <link rel='stylesheet' href='/resources/css/styles.css' />
     <meta name="viewport" charset="UTF-8" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="A hamster chat room."/>
     <meta name="author" content="Daniel Kermode"/>
@@ -10,11 +12,16 @@
     <!--google analytics end-->
   </head>
   <body>
-    <h1>Ciao, criceto! What's your name?</h1>
-
-    <form action="/register" method="POST">
-    <div><input name="body" rows="20" cols="80"></input></div>
-    <div><input type="submit" value="Save"></div>
-    </form>
+    <div class="centered">
+      <h3>Ciao, criceto! What's your name?</h3>
+      <hr/>
+      <form action="/register" method="POST">
+      <div>
+        <input name="body" rows="20" cols="80"></input>
+        <input class="btn btn-primary" type="submit" value="Let's party!">
+      </div>
+      <hr/>
+      </form>
+    </div>
   </body>
 </html>
