@@ -47,9 +47,9 @@ window.onload = function() {
         messages.push({ id: served.Id, message: 'says ' + served.Data });
         break;
       case 'connect':
-        if(!hamsters[username]) {
+        if(!hamsters[served.Data]) {
           messages.push({ id: served.Data, message: 'has connected.' });
-        } else if(hamsters[username] && username != served.Data) {
+        } else if(hamsters[username] && username === served.Data) {
           sock.send(JSON.stringify({
             id: username,
             data: '{ "x": ' + hamsters[username].x + ', "y": ' + hamsters[username].y + '}',
