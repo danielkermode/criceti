@@ -5,7 +5,7 @@ import ReconnectingWebSocket from './lib/reconnecting-websocket.min.js';
 import Hamster from './lib/hamster';
 
 const reactRoot = document.getElementById('app');
-const wsuri = location.protocol.replace("http", "ws") + "//" + location.host + "/entry";
+const wsuri = location.protocol.replace('http', 'ws') + '//' + location.host + '/entry';
 const hamsters = {};
 const bounds = { x: 274, y: 132 };
 const startCoods = { x: getRandomInt(0, bounds.x), y: getRandomInt(0, bounds.y) };
@@ -22,7 +22,8 @@ function sendDummy() {
   sock.send('DUMMY');
 }
 
-setInterval(sendDummy, 30000);
+//stop 55s inactive disconnect in heroku
+setInterval(sendDummy, 50000);
 
 window.onload = function() {
   sock = new ReconnectingWebSocket(wsuri);
@@ -48,10 +49,10 @@ window.onload = function() {
         }));
         break;
       case 'chat':
-        messages.push({ id: served.Id, message: 'says ' + served.Data });
+        messages.push(served);
         break;
       case 'connect':
-        messages.push({ id: served.Data, message: 'has connected.' });
+        messages.push({ Id: served.Data, Add: 'has connected.' });
         if(hamsters[username] && username != served.Data) {
           sock.send(JSON.stringify({
             id: username,
@@ -61,7 +62,7 @@ window.onload = function() {
         }
         break;
       case 'disconnect':
-        messages.push({ id: served.Data, message: 'has disconnected.' });
+        messages.push({ Id: served.Data, Add: 'has disconnected.' });
         delete hamsters[served.Data];
         break;
       case 'setId':
@@ -89,7 +90,8 @@ window.onload = function() {
     }
     sockId = served.Id;
     ReactDOM.render(
-      <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages} hamsters={hamsters} username={username} sockId={sockId}/>,
+      <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages}
+      hamsters={hamsters} username={username} sockId={sockId}/>,
       reactRoot
     );
     // scroll message div to bottom, to see new messages immediately
@@ -98,7 +100,8 @@ window.onload = function() {
   }
 
   ReactDOM.render(
-    <App sock={sock}/>,
+    <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages}
+    hamsters={hamsters} username={username} sockId={sockId}/>,
     reactRoot
   );
 

@@ -54,10 +54,20 @@ export class Canvas extends Component {
   render() {
     if(this.state.ctx && this.state.canvas && this.props.hamsters) {
       const hams = this.props.hamsters;
+      const username = this.props.username;
+      let potentialHams = [];
       this.state.ctx.clearRect(0, 0, this.state.canvas.width, this.state.canvas.height);
       Object.keys(hams).forEach(id => {
         hams[id].draw(this.state.ctx)
+
+        if(id != username && hams[username] && hams[username].checkBounds(hams[id])) {
+          potentialHams.push(hams[id]);
+        }
       });
+      if(hams[username]) {
+        hams[username].canChallenge = potentialHams;
+        console.log(hams[username].canChallenge);
+      }
     }
     return (
       <canvas ref="myCanvas" style={{

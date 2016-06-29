@@ -43,17 +43,19 @@ export class App extends Component {
     return (
       <div>
         <h1>Criceti</h1>
-        <div>Your hamster is called {this.props.username}.</div>
+        <div>Your hamster is called <b>{this.props.username}</b>.</div>
         <hr/>
-        <span>
+        <div>
           <input onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter message" />
-        </span>
-        <button onClick={this.sendMessage}>Send Message</button>
+        </div>
+        <button className="btn btn-default" onClick={this.sendMessage}>Send</button>
         <hr/>
         <div id="message" style={messageDiv}>
           {this.props.messages &&
             this.props.messages.map(message => {
-              return (<div><b>{message.id}</b> {message.message}</div>)
+              return message.Add ?
+              (<div><b>{message.Id}</b> {message.Add}</div>) :
+              (<div><b>{message.Id}</b> says: {message.Data}</div>)
             })
           }
         </div>
