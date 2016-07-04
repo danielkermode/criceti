@@ -73,10 +73,32 @@ func (s *Server) sendPastMessages(c *Client) {
 	}
 }
 
-func (s *Server) sendAll(msg *Message) {
+func (s *Server) sendToRoom(msg *Message, room string) {
 	for _, c := range s.clients {
-		c.Write(msg)
+		if c.room == room {
+			c.Write(msg)
+		}
 	}
+}
+
+func (s *Server) broadcastToRoom(msg *Message, room string, cli *Client) {
+	for _, c := range s.clients {
+		if c.room == room && c.id != cli.id {
+			c.Write(msg)
+		}
+	}
+}
+
+func (s *Server) getCurrent(id string) (*Client, int) {
+	//get a client based on a string id (this is the form of data sent by the browser to the server)
+	i, _ := strconv.Atoi(id)
+	if _, ok := s.clients[i]; !ok {
+		return nil, 0
+	}
+
+	current := s.clients[i]
+	return current, i
+
 }
 
 // Listen and serve.
@@ -115,19 +137,18 @@ func (s *Server) Listen() {
 		case c := <-s.delCh:
 			log.Println("Delete client")
 			oldname := s.ids[c.id]
-			msg := &Message{strconv.Itoa(c.id), oldname, "disconnect"}
-			s.sendAll(msg)
+			msg := &Message{oldname, "", "disconnect"}
+			s.sendToRoom(msg, c.room)
 			// delete all server data (*client, id: username, and username: true)
 			delete(s.clients, c.id)
 			delete(s.ids, c.id)
 			delete(s.users, oldname)
 
-		// broadcast message for all clients
+		// message from clients
 		case msg := <-s.sendAllCh:
 			switch msg.Type {
 			case "username":
-				i, _ := strconv.Atoi(msg.Id)
-				current := s.clients[i]
+				current, i := s.getCurrent(msg.Id)
 				username := ""
 				if _, ok := s.users[msg.Data]; ok {
 					// if username exists on the server, set the username to be "username + _id"
@@ -140,12 +161,23 @@ func (s *Server) Listen() {
 				s.ids[i] = username
 				current.Write(&Message{msg.Id, username, "username"})
 				// send a "connected" message to all sockets
-				cmsg := &Message{msg.Id, username, "connect"}
-				s.sendAll(cmsg)
+				cmsg := &Message{username, "", "connect"}
+				s.sendToRoom(cmsg, current.room)
+			case "changeRoom":
+				current, i := s.getCurrent(msg.Id)
+				if current != nil {
+					leavemsg := &Message{s.ids[i], "", "leave"}
+					s.broadcastToRoom(leavemsg, current.room, current)
+					current.room = msg.Data
+					current.Write(&Message{msg.Id, current.room, "room"})
+				}
 			default:
 				//echo the message to all sockets
-				s.messages = append(s.messages, msg)
-				s.sendAll(msg)
+				current, i := s.getCurrent(msg.Id)
+				if current != nil {
+					s.messages = append(s.messages, msg)
+					s.sendToRoom(&Message{s.ids[i], msg.Data, msg.Type}, current.room)
+				}
 			}
 		case err := <-s.errCh:
 			log.Println("Error:", err.Error())

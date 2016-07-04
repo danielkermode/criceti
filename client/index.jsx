@@ -6,10 +6,10 @@ import Hamster from './lib/hamster';
 
 const reactRoot = document.getElementById('app');
 const wsuri = location.protocol.replace('http', 'ws') + '//' + location.host + '/entry';
-const hamsters = {};
 const bounds = { x: 274, y: 132 };
 const startCoods = { x: getRandomInt(0, bounds.x), y: getRandomInt(0, bounds.y) };
 
+let hamsters = {};
 let sockId, username;
 let messages = [];
 let sock = null;
@@ -19,7 +19,12 @@ function getRandomInt(min, max) {
 }
 
 function sendDummy() {
-  sock.send('DUMMY');
+  const dummy = {
+    id: '',
+    data: '',
+    type: 'dummy'
+  };
+  sock.send(JSON.stringify(dummy));
 }
 
 //stop 55s inactive disconnect in heroku
@@ -39,11 +44,12 @@ window.onload = function() {
 
   sock.onmessage = function(e) {
     const served = JSON.parse(e.data);
+    console.log(served)
     switch(served.Type) {
       case 'username':
         username = served.Data;
         sock.send(JSON.stringify({
-          id: username,
+          id: sockId,
           data: '{ "x": 6, "y": 6 }',
           type: 'move'
         }));
@@ -52,20 +58,36 @@ window.onload = function() {
         messages.push(served);
         break;
       case 'connect':
-        messages.push({ Id: served.Data, Add: 'has connected.' });
-        if(hamsters[username] && username != served.Data) {
+        messages.push({ Id: served.Id, Add: 'has connected.' });
+        if(hamsters[username] && username != served.Id) {
           sock.send(JSON.stringify({
-            id: username,
+            id: sockId,
             data: '{ "x": ' + hamsters[username].x + ', "y": ' + hamsters[username].y + '}',
             type: 'move'
           }));
         }
         break;
+      case 'leave':
+        messages.push({ Id: served.Id, Add: 'has left the room.' });
+        delete hamsters[served.Id];
+        break;
+      case 'room':
+        messages = [];
+        if(hamsters[username]) {
+          const newObj = {};
+          Object.defineProperty(newObj, username, {
+            value: hamsters[username]
+          });
+          hamsters = newObj;
+          console.log(hamsters)
+        }
+        break;
       case 'disconnect':
-        messages.push({ Id: served.Data, Add: 'has disconnected.' });
-        delete hamsters[served.Data];
+        messages.push({ Id: served.Id, Add: 'has disconnected.' });
+        delete hamsters[served.Id];
         break;
       case 'setId':
+      //this is the one time I expect the actual id and not the username as the served if.
         sockId = served.Id;
         sock.send(JSON.stringify({
           id: sockId,
@@ -88,7 +110,6 @@ window.onload = function() {
       default:
         console.warn('No specified action for message type ' + served.Type);
     }
-    sockId = served.Id;
     ReactDOM.render(
       <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages}
       hamsters={hamsters} username={username} sockId={sockId}/>,

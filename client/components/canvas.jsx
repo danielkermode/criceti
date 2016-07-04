@@ -19,7 +19,7 @@ export class Canvas extends Component {
   componentDidMount() {
     let canvas = ReactDOM.findDOMNode(this.refs.myCanvas);
     let ctx = canvas.getContext('2d');
-    const ham = new Hamster('sddasd', '', 6, 6);
+    const ham = new Hamster(this.props.username, '', 6, 6);
     this.setState({ ctx, canvas });
 
     document.addEventListener("keydown", (e) => {
@@ -42,9 +42,11 @@ export class Canvas extends Component {
           if(ham.x < this.props.bounds.x) ham.x += 6;
           break;
       }
+      const coods = { x: ham.x, y: ham.y };
+
       this.props.sock.send(JSON.stringify({
-        id: this.props.username,
-        data: '{ "x": ' + ham.x + ', "y": ' + ham.y + '}',
+        id: this.props.sockId,
+        data: JSON.stringify(coods),
         type: 'move'
       }));
 
@@ -59,21 +61,20 @@ export class Canvas extends Component {
       this.state.ctx.clearRect(0, 0, this.state.canvas.width, this.state.canvas.height);
       Object.keys(hams).forEach(id => {
         hams[id].draw(this.state.ctx)
-
+        //if player hamster is colliding with other hamsters, add them to potential challenge targets
         if(id != username && hams[username] && hams[username].checkBounds(hams[id])) {
           potentialHams.push(hams[id]);
         }
       });
       if(hams[username]) {
         hams[username].canChallenge = potentialHams;
-        console.log(hams[username].canChallenge);
       }
     }
     return (
       <canvas ref="myCanvas" style={{
         border: '1px solid #000000',
-        width: this.props.bounds.x * 5 + 'px',
-        height: this.props.bounds.y * 5  + 'px'
+        width: this.props.bounds.x * 3 + 'px',
+        height: this.props.bounds.y * 3 + 'px'
       }}/>
     );
   }

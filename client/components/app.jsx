@@ -22,10 +22,11 @@ export class App extends Component {
 
   sendMessage = () => {
     this.props.sock.send(JSON.stringify({
-      id: this.props.username,
+      id: this.props.sockId,
       data: this.state.message,
       type: 'chat'
     }));
+    document.getElementById('input').value = '';
   };
 
   handleChange = (e) => {
@@ -39,14 +40,30 @@ export class App extends Component {
     }
   };
 
+  onEnter = (e) => {
+    if (e.keyCode === 13) {
+      // 13 is enter
+      this.sendMessage();
+    }
+  };
+
+  changeRoom = (name) => {
+    this.props.sock.send(JSON.stringify({
+      id: this.props.sockId,
+      data: this.props.username,
+      type: 'changeRoom'
+    }));
+  };
+
   render() {
+    const ham = this.props.hamsters[this.props.username];
     return (
       <div>
         <h1>Criceti</h1>
         <div>Your hamster is called <b>{this.props.username}</b>.</div>
         <hr/>
         <div>
-          <input onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter message" />
+          <input id="input" onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter message" />
         </div>
         <button className="btn btn-default" onClick={this.sendMessage}>Send</button>
         <hr/>
@@ -55,11 +72,23 @@ export class App extends Component {
             this.props.messages.map(message => {
               return message.Add ?
               (<div><b>{message.Id}</b> {message.Add}</div>) :
-              (<div><b>{message.Id}</b> says: {message.Data}</div>)
+              (<div><b>{message.Id}</b> says: {message.Data}</div>);
             })
           }
         </div>
-        <Canvas sock={this.props.sock} bounds={this.props.bounds}
+        <hr/>
+        <div>
+          <button onClick={this.changeRoom.bind(this.props.username)} className="btn btn-default">
+            Play with yourself!
+          </button>
+          {ham && ham.canChallenge &&
+            ham.canChallenge.map(hamster => {
+              return (<button className="btn btn-default">Play with {hamster.name}!</button>);
+            })
+          }
+        </div>
+        <br/>
+        <Canvas sock={this.props.sock} bounds={this.props.bounds} sockId={this.props.sockId}
         hamsters={this.props.hamsters} username={this.props.username}/>
       </div>
     );
