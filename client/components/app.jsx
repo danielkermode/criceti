@@ -47,12 +47,26 @@ export class App extends Component {
     }
   };
 
-  changeRoom = (name) => {
-    this.props.sock.send(JSON.stringify({
+  challenge = (name) => {
+    const send = this.props.sock.send
+    return (e) => {
+      const toSend = {
+        id: this.props.sockId,
+        data: name,
+        type: 'challenge'
+      };
+      send(JSON.stringify(toSend));
+    };
+  };
+
+  changeRoom = (e, name) => {
+    const toSend = {
       id: this.props.sockId,
-      data: this.props.username,
+      data: name,
       type: 'changeRoom'
-    }));
+    };
+    console.log(toSend)
+    this.props.sock.send(JSON.stringify(toSend));
   };
 
   render() {
@@ -83,7 +97,8 @@ export class App extends Component {
           </button>
           {ham && ham.canChallenge &&
             ham.canChallenge.map(hamster => {
-              return (<button className="btn btn-default">Play with {hamster.name}!</button>);
+              return (<button onClick={this.challenge(hamster.name)}
+              className="btn btn-default">Play with {hamster.name}!</button>);
             })
           }
         </div>

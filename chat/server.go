@@ -101,6 +101,15 @@ func (s *Server) getCurrent(id string) (*Client, int) {
 
 }
 
+func (s *Server) getByUsername(user string) *Client {
+	for id, name := range s.ids {
+		if name == user {
+			return s.clients[id]
+		}
+	}
+	return nil
+}
+
 // Listen and serve.
 // It serves client connection and broadcast request.
 func (s *Server) Listen() {
@@ -170,6 +179,12 @@ func (s *Server) Listen() {
 					s.broadcastToRoom(leavemsg, current.room, current)
 					current.room = msg.Data
 					current.Write(&Message{msg.Id, current.room, "room"})
+				}
+			case "challenge":
+				current, i := s.getCurrent(msg.Id)
+				other := s.getByUsername(msg.Data)
+				if current != nil && other != nil {
+					other.Write(&Message{s.ids[i], "", "challenge"})
 				}
 			default:
 				//echo the message to all sockets

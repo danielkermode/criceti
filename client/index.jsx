@@ -13,6 +13,7 @@ let hamsters = {};
 let sockId, username;
 let messages = [];
 let sock = null;
+let room = "";
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -48,6 +49,7 @@ window.onload = function() {
     switch(served.Type) {
       case 'username':
         username = served.Data;
+        //send default coods
         sock.send(JSON.stringify({
           id: sockId,
           data: '{ "x": 6, "y": 6 }',
@@ -56,6 +58,9 @@ window.onload = function() {
         break;
       case 'chat':
         messages.push(served);
+        break;
+      case 'challenge':
+        messages.push({ Id: served.Id, Add: 'has asked to play with you!' });
         break;
       case 'connect':
         messages.push({ Id: served.Id, Add: 'has connected.' });
@@ -73,14 +78,15 @@ window.onload = function() {
         break;
       case 'room':
         messages = [];
-        if(hamsters[username]) {
-          const newObj = {};
-          Object.defineProperty(newObj, username, {
-            value: hamsters[username]
-          });
-          hamsters = newObj;
-          console.log(hamsters)
-        }
+        const hamX = hamsters[username].x;
+        const hamY = hamsters[username].y;
+        hamsters = {};
+        //send default coods
+        sock.send(JSON.stringify({
+          id: sockId,
+          data: '{ "x":' + hamX + ', "y": '+ hamY + ' }',
+          type: 'move'
+        }));
         break;
       case 'disconnect':
         messages.push({ Id: served.Id, Add: 'has disconnected.' });
