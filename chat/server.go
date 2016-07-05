@@ -144,6 +144,7 @@ func (s *Server) Listen() {
 
 		// del a client
 		case c := <-s.delCh:
+      //Extract this into a function
 			log.Println("Delete client")
 			oldname := s.ids[c.id]
 			msg := &Message{oldname, "", "disconnect"}
@@ -201,4 +202,4 @@ func (s *Server) Listen() {
 			return
 		}
 	}
-}
+}// this is a 200 line file with not tests. Split it out and test at least some of it!

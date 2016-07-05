@@ -9,9 +9,9 @@ import (
 )
 
 func roomHandler(w http.ResponseWriter, r *http.Request) {
-	m := r.URL.Path
+	m := r.URL.Path //Better variable name!
 	// if url is length 6 no username has been entered
-	if len(m) == 6 {
+	if len(m) == 6 { //hardcoding this to 6 is fragile and is a "magic number" which is a code smell
 		http.Redirect(w, r, "/room/anon", http.StatusFound)
 		return
 	}
