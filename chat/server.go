@@ -183,8 +183,12 @@ func (s *Server) Listen() {
 			case "challenge":
 				current, i := s.getCurrent(msg.Id)
 				other := s.getByUsername(msg.Data)
-				if current != nil && other != nil {
+				if current != nil && other != nil && !other.challenging {
 					other.Write(&Message{s.ids[i], "", "challenge"})
+					current.challenging = true
+					other.challenging = true
+				} else if current != nil && other != nil && other.challenging {
+					current.Write(&Message{msg.Data, "", "busy"})
 				}
 			default:
 				//echo the message to all sockets

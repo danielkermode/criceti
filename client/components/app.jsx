@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { Canvas } from './canvas'
+import { Canvas } from './canvas';
+import { Messages } from './messages';
 
 const messageDiv = {
   width: '1000px',
@@ -47,26 +48,16 @@ export class App extends Component {
     }
   };
 
-  challenge = (name) => {
-    const send = this.props.sock.send
+  act = (name, type) => {
+    const send = this.props.sock.send;
     return (e) => {
       const toSend = {
         id: this.props.sockId,
         data: name,
-        type: 'challenge'
+        type
       };
       send(JSON.stringify(toSend));
     };
-  };
-
-  changeRoom = (e, name) => {
-    const toSend = {
-      id: this.props.sockId,
-      data: name,
-      type: 'changeRoom'
-    };
-    console.log(toSend)
-    this.props.sock.send(JSON.stringify(toSend));
   };
 
   render() {
@@ -84,20 +75,30 @@ export class App extends Component {
         <div id="message" style={messageDiv}>
           {this.props.messages &&
             this.props.messages.map(message => {
-              return message.Add ?
-              (<div><b>{message.Id}</b> {message.Add}</div>) :
-              (<div><b>{message.Id}</b> says: {message.Data}</div>);
+              const play = message.play &&
+              (<div>
+                <button className="btn btn-success">Accept</button>
+                <button className="btn btn-warning">No grazie</button>
+              </div>);
+              return (
+              message.Add ?
+              (<div>
+                <div><b>{message.Id}</b> {message.Add}</div>
+                <div>{play}</div>
+              </div>) :
+              (<div><b>{message.Id}</b> says: {message.Data}</div>)
+              );
             })
           }
         </div>
         <hr/>
         <div>
-          <button onClick={this.changeRoom.bind(this.props.username)} className="btn btn-default">
+          <button onClick={this.act(this.props.username, 'changeRoom')} className="btn btn-default">
             Play with yourself!
           </button>
           {ham && ham.canChallenge &&
             ham.canChallenge.map(hamster => {
-              return (<button onClick={this.challenge(hamster.name)}
+              return (<button onClick={this.act(hamster.name, 'challenge')}
               className="btn btn-default">Play with {hamster.name}!</button>);
             })
           }

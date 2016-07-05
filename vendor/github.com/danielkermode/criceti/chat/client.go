@@ -14,12 +14,13 @@ var maxId int = 0
 
 // Chat client.
 type Client struct {
-	id     int
-	room   string
-	ws     *websocket.Conn
-	server *Server
-	ch     chan *Message
-	doneCh chan bool
+	id          int
+	room        string
+	challenging bool
+	ws          *websocket.Conn
+	server      *Server
+	ch          chan *Message
+	doneCh      chan bool
 }
 
 // Create new chat client.
@@ -37,8 +38,9 @@ func NewClient(ws *websocket.Conn, server *Server) *Client {
 	ch := make(chan *Message, channelBufSize)
 	doneCh := make(chan bool)
 	defaultRoom := ""
+	challengeState := false
 
-	return &Client{maxId, defaultRoom, ws, server, ch, doneCh}
+	return &Client{maxId, defaultRoom, challengeState, ws, server, ch, doneCh}
 }
 
 func (c *Client) Conn() *websocket.Conn {

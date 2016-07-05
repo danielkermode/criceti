@@ -8,12 +8,11 @@ const reactRoot = document.getElementById('app');
 const wsuri = location.protocol.replace('http', 'ws') + '//' + location.host + '/entry';
 const bounds = { x: 274, y: 132 };
 const startCoods = { x: getRandomInt(0, bounds.x), y: getRandomInt(0, bounds.y) };
-
 let hamsters = {};
 let sockId, username;
 let messages = [];
 let sock = null;
-let room = "";
+let room = '';
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -45,7 +44,6 @@ window.onload = function() {
 
   sock.onmessage = function(e) {
     const served = JSON.parse(e.data);
-    console.log(served)
     switch(served.Type) {
       case 'username':
         username = served.Data;
@@ -60,7 +58,7 @@ window.onload = function() {
         messages.push(served);
         break;
       case 'challenge':
-        messages.push({ Id: served.Id, Add: 'has asked to play with you!' });
+        messages.push({ Id: served.Id, Add: 'has asked to play with you!', play: true });
         break;
       case 'connect':
         messages.push({ Id: served.Id, Add: 'has connected.' });
@@ -81,6 +79,7 @@ window.onload = function() {
         const hamX = hamsters[username].x;
         const hamY = hamsters[username].y;
         hamsters = {};
+        room =  served.Data;
         //send default coods
         sock.send(JSON.stringify({
           id: sockId,
@@ -118,7 +117,7 @@ window.onload = function() {
     }
     ReactDOM.render(
       <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages}
-      hamsters={hamsters} username={username} sockId={sockId}/>,
+      hamsters={hamsters} username={username} sockId={sockId} room={room}/>,
       reactRoot
     );
     // scroll message div to bottom, to see new messages immediately
@@ -128,7 +127,7 @@ window.onload = function() {
 
   ReactDOM.render(
     <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages}
-    hamsters={hamsters} username={username} sockId={sockId}/>,
+    hamsters={hamsters} username={username} sockId={sockId} room={room}/>,
     reactRoot
   );
 
