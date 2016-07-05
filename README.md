@@ -6,7 +6,7 @@ A hamster chat room.
 
 ```$ git clone``` this repo and ```$ go install```.
 
-```$ criceti```. A server will be running at localhost:3000.
+```$ criceti```. A server will be running at localhost:8080.
 
 To build the client, ```$ cd client && npm i && npm run build```
 
