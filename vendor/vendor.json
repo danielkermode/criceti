@@ -6,13 +6,15 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "4r3qWMsyRTKIWT2IcWChySwGBa8=",
+			"checksumSHA1": "YVfH+uoVkT8hYfN22JArv1Q1CIg=",
+			"origin": "github.com/danielkermode/criceti/vendor/github.com/danielkermode/criceti/chat",
 			"path": "github.com/danielkermode/criceti/chat",
-			"revision": "0d067a56f1cd836ca0c0b91409aa7ce35271d231",
-			"revisionTime": "2016-07-06T10:22:07Z"
+			"revision": "1e4d1bfda640214cf6ef7d06175d7e0ddbf6b8dc",
+			"revisionTime": "2016-07-06T10:24:45Z"
 		},
 		{
-			"checksumSHA1": "likOl7O0BJntqagR050kkOBuY4o=",
+			"checksumSHA1": "ED5ZiI+LLlCUgg5FFr1rAOiEups=",
+			"origin": "github.com/danielkermode/criceti/vendor/golang.org/x/net/websocket",
 			"path": "golang.org/x/net/websocket",
 			"revision": "bc3663df0ac92f928d419e31e0d2af22e683a5a2",
 			"revisionTime": "2016-06-21T20:48:10Z"
