@@ -1,12 +1,16 @@
 #!/bin/bash
 
+function copychat {
+  for file in `ls chat | grep -v ".*_test\.go$"`
+  do
+    cp $start$file ./vendor/github.com/danielkermode/criceti/chat
+  done
+}
+
 case  $1  in
   deploy)
     start="./chat/"
-    for file in `ls chat | grep -v ".*_test\.go$"`
-    do
-      cp $start$file ./vendor/github.com/danielkermode/criceti/chat
-    done
+    copychat
     git add .
     git commit -m "$2"
     git push
@@ -18,10 +22,7 @@ case  $1  in
   watch)
     pkill -f criceti
     start="./chat/"
-    for file in `ls chat | grep -v ".*_test\.go$"`
-    do
-      cp $start$file ./vendor/github.com/danielkermode/criceti/chat
-    done
+    copychat
     go install
     criceti &
     inotifywait -e close_write,moved_to,create  . ./chat |
