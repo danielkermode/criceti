@@ -6,8 +6,10 @@ import (
 	"time"
 )
 
-func TestServerAdd(t *testing.T) {
+var origin = "http://localhost/"
+
+func TestServer(t *testing.T) {
 	server := chat.NewServer("entry")
-	time.AfterFunc(2*time.Second, server.Done)
+	time.AfterFunc(1*time.Second, server.Done)
 	server.Listen()
 }

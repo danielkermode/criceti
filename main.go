@@ -6,12 +6,14 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func roomHandler(w http.ResponseWriter, r *http.Request) {
-	m := r.URL.Path
-	// if url is length 6 no username has been entered
-	if len(m) == 6 {
+	currentUrl := r.URL.Path
+	user := currentUrl[strings.LastIndex(currentUrl, "/"):len(currentUrl)]
+	//if there is nothing after '/'
+	if len(user) == 0 {
 		http.Redirect(w, r, "/room/anon", http.StatusFound)
 		return
 	}

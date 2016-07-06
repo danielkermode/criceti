@@ -14,7 +14,7 @@
     "goclean": "cp -r ../vendor/github.com/danielkermode/criceti/chat/ ../",
     "goupdate": "cd .. && govendor update github.com/danielkermode/criceti/chat",
     "gotest": "cd ../vendor/github.com/danielkermode/criceti/chat && go test -v",
-    "gobuild": "npm run goclean && git add . && git commit -m 'go build' && git push && npm run goupdate"
+    "gobuild": "npm run goclean && cd .. && git add . && git commit -m 'go build' && git push && npm run goupdate"
   },
   "author": "danielkermode",
   "license": "MIT",
