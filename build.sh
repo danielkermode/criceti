@@ -1,6 +1,7 @@
 #!/bin/bash
 
 function copychat {
+  start="./chat/"
   for file in `ls chat | grep -v ".*_test\.go$"`
   do
     cp $start$file ./vendor/github.com/danielkermode/criceti/chat
@@ -9,7 +10,6 @@ function copychat {
 
 case $1 in
   deploy)
-    start="./chat/"
     copychat
     git add .
     git commit -m "$2"
@@ -21,7 +21,6 @@ case $1 in
     ;;
   watch)
     pkill -f criceti
-    start="./chat/"
     copychat
     go install
     criceti &
