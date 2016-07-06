@@ -45,20 +45,14 @@ window.onload = function() {
   sock.onmessage = function(e) {
     const served = JSON.parse(e.data);
     switch(served.Type) {
-      case 'username':
-        username = served.Data;
-        //send default coods
-        sock.send(JSON.stringify({
-          id: sockId,
-          data: '{ "x": 6, "y": 6 }',
-          type: 'move'
-        }));
-        break;
-      case 'chat':
-        messages.push(served);
+      case 'busy':
+        messages.push({ Id: served.Id, Add: 'is busy at the moment.'});
         break;
       case 'challenge':
         messages.push({ Id: served.Id, Add: 'has asked to play with you!', play: true });
+        break;
+      case 'chat':
+        messages.push(served);
         break;
       case 'connect':
         messages.push({ Id: served.Id, Add: 'has connected.' });
@@ -70,9 +64,25 @@ window.onload = function() {
           }));
         }
         break;
+      case 'disconnect':
+        messages.push({ Id: served.Id, Add: 'has disconnected.' });
+        delete hamsters[served.Id];
+        break;
       case 'leave':
         messages.push({ Id: served.Id, Add: 'has left the room.' });
         delete hamsters[served.Id];
+        break;
+      case 'move':
+        if(served.Id) {
+          const coords = JSON.parse(served.Data);
+          if(!hamsters[served.Id] && served.Data) {
+            const hamUrl = served.Id === username ? '/resources/hamster-yellow.png' : '/resources/hamster-yellow.png';
+            hamsters[served.Id] = new Hamster(served.Id, hamUrl, coords.x, coords.y);
+          } else {
+            hamsters[served.Id].x = coords.x;
+            hamsters[served.Id].y = coords.y;
+          }
+        }
         break;
       case 'room':
         messages = [];
@@ -87,10 +97,6 @@ window.onload = function() {
           type: 'move'
         }));
         break;
-      case 'disconnect':
-        messages.push({ Id: served.Id, Add: 'has disconnected.' });
-        delete hamsters[served.Id];
-        break;
       case 'setId':
       //this is the one time I expect the actual id and not the username as the served if.
         sockId = served.Id;
@@ -100,17 +106,14 @@ window.onload = function() {
           type: 'username'
         }));
         break;
-      case 'move':
-        if(served.Id) {
-          const coords = JSON.parse(served.Data);
-          if(!hamsters[served.Id] && served.Data) {
-            const hamUrl = served.Id === username ? '/resources/hamster-yellow.png' : '/resources/hamster-yellow.png';
-            hamsters[served.Id] = new Hamster(served.Id, hamUrl, coords.x, coords.y);
-          } else {
-            hamsters[served.Id].x = coords.x;
-            hamsters[served.Id].y = coords.y;
-          }
-        }
+      case 'username':
+        username = served.Data;
+        //send default coods
+        sock.send(JSON.stringify({
+          id: sockId,
+          data: '{ "x": 6, "y": 6 }',
+          type: 'move'
+        }));
         break;
       default:
         console.warn('No specified action for message type ' + served.Type);

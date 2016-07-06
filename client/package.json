@@ -10,7 +10,10 @@
     "test": "mocha --opts ./test/mocha.opts --compilers js:babel-core/register test/tests.js",
     "build": "webpack --progress --profile --colors",
     "build:watch": "webpack --progress --profile --colors --watch",
-    "open": "cd ../public && xdg-open index.html"
+    "open": "cd ../public && xdg-open index.html",
+    "cleango": "cp -r ../vendor/github.com/danielkermode/criceti/chat/ ../",
+    "updatego": "cd .. && govendor github.com/danielkermode/criceti/chat",
+    "testgo": "cd ../vendor/github.com/danielkermode/criceti/chat && go test"
   },
   "author": "danielkermode",
   "license": "MIT",
