@@ -7,7 +7,7 @@ function copychat {
   done
 }
 
-case  $1  in
+case $1 in
   deploy)
     start="./chat/"
     copychat
@@ -37,6 +37,6 @@ case  $1  in
   heroku)
     git push heroku master
     ;;
-     *)
+  *)
 esac
 
