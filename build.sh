@@ -34,6 +34,9 @@ case  $1  in
     cd chat
     go test -v
     ;;
+  heroku)
+    git push heroku master
+    ;;
      *)
 esac
 
