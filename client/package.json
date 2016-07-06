@@ -10,9 +10,7 @@
     "test": "mocha --opts ./test/mocha.opts --compilers js:babel-core/register test/tests.js",
     "build": "webpack --progress --profile --colors",
     "build:watch": "webpack --progress --profile --colors --watch",
-    "open": "cd ../public && xdg-open index.html",
-    "gotest": "cd ~/Desktop/code/gocode/src/github.com/danielkermode/criceti/vendor/github.com/danielkermode/criceti/chat && go test -v",
-    "gobuild": "npm run goclean && cd ~/Desktop/code/gocode/src/github.com/danielkermode/criceti && git add . && git commit -m 'go build' && git push && cd ~/Desktop/code/gocode/src/github.com/danielkermode/criceti/client && npm run goupdate"
+    "open": "cd ../public && xdg-open index.html"
   },
   "author": "danielkermode",
   "license": "MIT",
