@@ -11,9 +11,10 @@
     "build": "webpack --progress --profile --colors",
     "build:watch": "webpack --progress --profile --colors --watch",
     "open": "cd ../public && xdg-open index.html",
-    "cleango": "cp -r ../vendor/github.com/danielkermode/criceti/chat/ ../",
-    "updatego": "cd .. && govendor github.com/danielkermode/criceti/chat",
-    "testgo": "cd ../vendor/github.com/danielkermode/criceti/chat && go test"
+    "goclean": "cp -r ../vendor/github.com/danielkermode/criceti/chat/ ../",
+    "goupdate": "cd .. && govendor update github.com/danielkermode/criceti/chat",
+    "gotest": "cd ../vendor/github.com/danielkermode/criceti/chat && go test -v",
+    "gobuild": "npm run goclean && git add . && git commit -m 'go build' && git push && npm run goupdate"
   },
   "author": "danielkermode",
   "license": "MIT",
