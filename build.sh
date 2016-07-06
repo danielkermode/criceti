@@ -6,7 +6,10 @@ case  $1  in
     git add .
     git commit -m "$2"
     git push
-    govendor update github.com/danielkermode/criceti/chat
+    govendor fetch github.com/danielkermode/criceti/chat
+    git add .
+    git commit -m "govendor update"
+    git push
     ;;
   watch)
     pkill -f criceti
