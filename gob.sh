@@ -3,4 +3,4 @@ cp -r ~/Desktop/code/gocode/src/github.com/danielkermode/criceti/vendor/github.c
 git add .
 git commit -m $1
 git push
-govendor update github.com/danielkermode/criceti/chat +vendor
+govendor update github.com/danielkermode/criceti/chat
