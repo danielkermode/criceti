@@ -27,7 +27,7 @@ case  $1  in
     criceti &
     inotifywait -e close_write,moved_to,create  . ./chat |
     while read -r directory events filename; do
-      ./gor.sh
+      ./build.sh watch
     done
     ;;
   test)
