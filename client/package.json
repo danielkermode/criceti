@@ -11,10 +11,10 @@
     "build": "webpack --progress --profile --colors",
     "build:watch": "webpack --progress --profile --colors --watch",
     "open": "cd ../public && xdg-open index.html",
-    "goclean": "cp -r ../vendor/github.com/danielkermode/criceti/chat/ ../",
-    "goupdate": "cd .. && govendor update github.com/danielkermode/criceti/chat",
-    "gotest": "cd ../vendor/github.com/danielkermode/criceti/chat && go test -v",
-    "gobuild": "npm run goclean && cd .. && git add . && git commit -m 'go build' && git push && npm run goupdate"
+    "goclean": "cp -r ~/Desktop/code/gocode/src/github.com/danielkermode/criceti/vendor/github.com/danielkermode/criceti/chat/ ~/Desktop/code/gocode/src/github.com/danielkermode/criceti/",
+    "goupdate": "cd ~/Desktop/code/gocode/src/github.com/danielkermode/criceti && govendor update github.com/danielkermode/criceti/chat",
+    "gotest": "cd ~/Desktop/code/gocode/src/github.com/danielkermode/criceti/vendor/github.com/danielkermode/criceti/chat && go test -v",
+    "gobuild": "npm run goclean && cd ~/Desktop/code/gocode/src/github.com/danielkermode/criceti && git add . && git commit -m 'go build' && git push && npm run goupdate"
   },
   "author": "danielkermode",
   "license": "MIT",
