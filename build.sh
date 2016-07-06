@@ -2,7 +2,11 @@
 
 case  $1  in
   deploy)
-    cp -r ~/Desktop/code/gocode/src/github.com/danielkermode/criceti/chat/ ~/Desktop/code/gocode/src/github.com/danielkermode/criceti/vendor/github.com/danielkermode/criceti/
+    start="./chat/"
+    for file in `ls chat | grep -v ".*_test\.go$"`
+    do
+      cp $start$file ./vendor/github.com/danielkermode/criceti/chat
+    done
     git add .
     git commit -m "$2"
     git push
@@ -13,7 +17,11 @@ case  $1  in
     ;;
   watch)
     pkill -f criceti
-    cp -r ./chat/ ./vendor/github.com/danielkermode/criceti/
+    start="./chat/"
+    for file in `ls chat | grep -v ".*_test\.go$"`
+    do
+      cp $start$file ./vendor/github.com/danielkermode/criceti/chat
+    done
     go install
     criceti &
     inotifywait -e close_write,moved_to,create  . ./chat |
@@ -27,3 +35,4 @@ case  $1  in
     ;;
      *)
 esac
+

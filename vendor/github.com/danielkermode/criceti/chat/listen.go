@@ -10,7 +10,7 @@ import (
 
 func (s *Server) Listen() {
 
-	log.Println("Listening server.....")
+	log.Println("Listening server...")
 
 	// websocket handler
 	onConnected := func(ws *websocket.Conn) {
