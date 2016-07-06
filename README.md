@@ -10,4 +10,10 @@ A hamster chat room.
 
 To build the client, ```$ cd client && npm i && npm run build```
 
+I've added a shell script that aids my Go code development.
+```$ ./build.sh <cmd> [msg]``` where ```cmd``` is one of:
+```deploy``` does git/govendor stuff, commits with ```msg```.
+```watch``` sets up a restarting Go server (works like nodemon).
+```test``` runs tests.
+
 WIP.
