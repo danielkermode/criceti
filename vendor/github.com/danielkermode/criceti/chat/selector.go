@@ -34,9 +34,9 @@ func (s *Server) Selector() {
 				current, i := s.getCurrent(msg.Id)
 				other := s.getByUsername(msg.Data)
 				if current != nil && other != nil && !other.challenging {
-					other.Write(&Message{s.ids[i], "", "challenge"})
 					current.challenging = true
 					other.challenging = true
+					other.Write(&Message{s.ids[i], "", "challenge"})
 				} else if current != nil && other != nil && other.challenging {
 					current.Write(&Message{msg.Data, "", "busy"})
 				}
@@ -46,6 +46,8 @@ func (s *Server) Selector() {
 					leavemsg := &Message{s.ids[i], "", "leave"}
 					s.broadcastToRoom(leavemsg, current.room, current)
 					current.room = msg.Data
+					joinmsg := &Message{s.ids[i], "", "connect"}
+					s.broadcastToRoom(joinmsg, current.room, current)
 					current.Write(&Message{msg.Id, current.room, "room"})
 				}
 			case "username":

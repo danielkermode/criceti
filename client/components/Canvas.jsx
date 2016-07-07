@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import Hamster from '../lib/hamster';
+import Hamster from '../lib/Hamster';
 
 export class Canvas extends Component {
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { App } from './components/app';
+import { App } from './components/App';
 import ReconnectingWebSocket from './lib/reconnecting-websocket.min.js';
-import Hamster from './lib/hamster';
+import Hamster from './lib/Hamster';
 
 const reactRoot = document.getElementById('app');
 const wsuri = location.protocol.replace('http', 'ws') + '//' + location.host + '/entry';
@@ -120,7 +120,7 @@ window.onload = function() {
     }
     ReactDOM.render(
       <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages}
-      hamsters={hamsters} username={username} sockId={sockId} room={room}/>,
+      hamsters={hamsters} username={username} sockId={sockId} room={room} />,
       reactRoot
     );
     // scroll message div to bottom, to see new messages immediately
@@ -130,7 +130,7 @@ window.onload = function() {
 
   ReactDOM.render(
     <App sock={sock} startCoods={startCoods} bounds={bounds} messages={messages}
-    hamsters={hamsters} username={username} sockId={sockId} room={room}/>,
+    hamsters={hamsters} username={username} sockId={sockId} room={room} />,
     reactRoot
   );
 

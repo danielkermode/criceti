@@ -1,5 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 
+const messageDiv = {
+  width: '1000px',
+  height: '100px',
+  overflow: 'scroll'
+};
+
 export class Messages extends Component {
 
   static propTypes = {
@@ -11,7 +17,6 @@ export class Messages extends Component {
   }
 
   render() {
-    const ham = this.props.hamsters[this.props.username];
     return (
       <div id="message" style={messageDiv}>
         {this.props.messages &&
