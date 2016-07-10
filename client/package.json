@@ -7,7 +7,7 @@
     "node": "6.2.1"
   },
   "scripts": {
-    "test": "mocha --opts ./test/mocha.opts --compilers js:babel-core/register test/tests.js",
+    "test": "babel-node test/componentTests.js | tap-spec",
     "build": "webpack --progress --profile --colors",
     "build:watch": "webpack --progress --profile --colors --watch",
     "open": "cd ../public && xdg-open index.html"
@@ -15,14 +15,15 @@
   "author": "danielkermode",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.10.1",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
-    "chai": "^3.5.0",
-    "mocha": "^2.5.3",
-    "node-jsdom": "^3.1.5",
+    "enzyme": "^2.4.1",
     "react-addons-test-utils": "^15.2.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.0",
     "webpack": "^1.13.1"
   },
   "dependencies": {

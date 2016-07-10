@@ -14,10 +14,13 @@ case $1 in
     git add .
     git commit -m "$2"
     git push
-    govendor fetch github.com/danielkermode/criceti/chat
-    git add .
-    git commit -m "govendor update"
-    git push
+    if [ "$3" = "govendor" ]
+    then
+      govendor fetch github.com/danielkermode/criceti/chat
+      git add .
+      git commit -m "govendor update"
+      git push
+    fi
     ;;
   watch)
     pkill -f criceti

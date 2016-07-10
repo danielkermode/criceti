@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = {
   entry: [
-  './index.jsx' // Your appʼs entry point
+  './index.js' // Your appʼs entry point
   ],
   output: {
     path: path.normalize(__dirname + '/../public/resources'),
@@ -11,12 +11,12 @@ module.exports = {
     publicPath: '/'
   },
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js']
   },
   module: {
     loaders: [
       {
-        test: /\.jsx?$/,
+        test: /\.js$/,
         loaders: ['babel'],
         include: __dirname
       }
