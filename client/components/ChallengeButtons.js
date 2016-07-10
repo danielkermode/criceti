@@ -32,8 +32,8 @@ export class ChallengeButtons extends Component {
         Play with yourself!
       </button>
       {ham && ham.canChallenge &&
-        ham.canChallenge.map(hamster => {
-          return (<button onClick={this.act(hamster.name, 'challenge')}
+        ham.canChallenge.map((hamster, key) => {
+          return (<button key={key} onClick={this.act(hamster.name, 'challenge')}
           className="btn btn-default">Play with {hamster.name}!</button>);
         })
       }
