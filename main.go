@@ -41,6 +41,6 @@ func main() {
 	if port == "" {
 		port = "5000"
 	}
-	fmt.Println("listening on port! " + port)
+	fmt.Println("listening on port " + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

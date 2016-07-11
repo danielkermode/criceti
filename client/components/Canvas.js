@@ -19,37 +19,45 @@ export class Canvas extends Component {
   componentDidMount() {
     let canvas = ReactDOM.findDOMNode(this.refs.myCanvas);
     let ctx = canvas.getContext('2d');
-    const ham = new Hamster(this.props.username, '', 6, 6);
+    const ham = new Hamster(this.props.username, '', this.props.startCoords.x, this.props.startCoords.y);
     this.setState({ ctx, canvas });
 
     document.addEventListener("keydown", (e) => {
       e = e || window.event;
+
+      const sendCoods = () => {
+        const coods = { x: ham.x, y: ham.y };
+        this.props.sock.send(JSON.stringify({
+          id: this.props.sockId,
+          data: JSON.stringify(coods),
+          type: 'move'
+        }));
+      };
+
       switch(e.keyCode) {
         // up arrow
         case 38:
           if(ham.y > 6) ham.y -= 6;
+          sendCoods();
           break;
         // down arrow
         case 40:
           if(ham.y < this.props.bounds.y) ham.y += 6;
+          sendCoods();
           break;
         // left arrow
         case 37:
           if(ham.x > 6) ham.x -= 6;
+          sendCoods();
           break;
         //right arrow
         case 39:
           if(ham.x < this.props.bounds.x) ham.x += 6;
+          sendCoods();
           break;
+        default:
+          //do nothing
       }
-      const coods = { x: ham.x, y: ham.y };
-
-      this.props.sock.send(JSON.stringify({
-        id: this.props.sockId,
-        data: JSON.stringify(coods),
-        type: 'move'
-      }));
-
     }, false);
   }
 

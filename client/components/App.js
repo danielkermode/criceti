@@ -3,6 +3,9 @@ import { Canvas } from './Canvas';
 import { Messages } from './Messages';
 import { ChallengeButtons } from './ChallengeButtons';
 import { RoomButton } from './RoomButton';
+import { connect } from 'react-redux';
+import { setChallenging } from '../redux/reducers/hamsters';
+import { deleteMessage } from '../redux/reducers/messages';
 
 export class App extends Component {
 
@@ -19,7 +22,7 @@ export class App extends Component {
 
   sendMessage = () => {
     this.props.sock.send(JSON.stringify({
-      id: this.props.sockId,
+      id: this.props.hamsters.id,
       data: this.state.message,
       type: 'chat'
     }));
@@ -38,35 +41,61 @@ export class App extends Component {
   };
 
   render() {
-    const ham = this.props.hamsters[this.props.username];
+    const ham = this.props.hamsters.all[this.props.hamsters.username];
     return (
       <div>
         <h1>Criceti</h1>
-        <div>Your hamster is called <b>{this.props.username}</b>.</div>
+        <div>Your hamster is called <b>{this.props.hamsters.username}</b>.</div>
         <hr/>
         <div>
           <input id="input" onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter message" />
         </div>
         <button className="btn btn-default" onClick={this.sendMessage}>Send</button>
         <hr/>
-        <Messages messages={this.props.messages}/>
+        <Messages
+          challenging={this.props.hamsters.challenging}
+          messages={this.props.messages.list}
+          deleteMessage={this.props.deleteMessage}
+          sock={this.props.sock}
+          sockId={this.props.hamsters.id}/>
         <hr/>
-        {!this.props.room ?
+        {!this.props.hamsters.room ?
           <ChallengeButtons
+            challenging={this.props.hamsters.challenging}
+            setChallenging={this.props.setChallenging}
             sock={this.props.sock}
-            sockId={this.props.sockId}
+            sockId={this.props.hamsters.id}
             ham={ham}
-            username={this.props.username}/> :
+            username={this.props.hamsters.username}/> :
           <RoomButton
             sock={this.props.sock}
-            sockId={this.props.sockId}
-            room={this.props.room}
-            username={this.props.username}/>
+            sockId={this.props.hamsters.id}
+            room={this.props.hamsters.room}
+            username={this.props.hamsters.username}/>
         }
         <br/>
-        <Canvas sock={this.props.sock} bounds={this.props.bounds} sockId={this.props.sockId}
-        hamsters={this.props.hamsters} username={this.props.username}/>
+        <Canvas sock={this.props.sock} bounds={this.props.hamsters.bounds} sockId={this.props.hamsters.id}
+        hamsters={this.props.hamsters.all} username={this.props.hamsters.username} startCoords={this.props.hamsters.startCoords}/>
       </div>
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    ...state
+  };
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    setChallenging: (name) => {
+      dispatch(setChallenging(name));
+    },
+    deleteMessage: (ind) => {
+      dispatch(deleteMessage(ind));
+    }
+  };
+}
+
+export const AppContainer = connect(mapStateToProps, mapDispatchToProps)(App);

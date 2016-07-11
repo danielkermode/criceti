@@ -9,10 +9,20 @@ import { RoomButton } from '../components/RoomButton';
 
 test('<App />', (t) => {
   const room = 'a room!'
-  const hamsters = {};
+  const hamsters = {
+    all: {},
+    username: '',
+    room: '',
+    startCoods: {},
+    id: ''
+  };
+  const messages = {
+    list: []
+  };
   const username = 'dummyUsername'
-  const wrapper = shallow(<App hamsters={hamsters} username={username} />);
-  const wrapperWithRoom = shallow(<App hamsters={hamsters} username={username} room={room} />);
+  const wrapper = shallow(<App hamsters={hamsters} messages={messages} />);
+  hamsters.room = 'this is a room';
+  const wrapperWithRoom = shallow(<App hamsters={hamsters} messages={messages} />);
   t.equal(wrapper.find('Messages').length, 1, 'has a Messages component');
   t.equal(wrapper.find('Canvas').length, 1, 'has a Canvas component');
   t.equal(wrapper.find('ChallengeButtons').length, 1, 'has a ChallengeButtons component if given no room');
