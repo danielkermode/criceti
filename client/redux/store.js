@@ -5,7 +5,8 @@ import createLogger from 'redux-logger';
 export default function(initialState) {
   const logger = createLogger();
   const createFinalStore = compose(
-    applyMiddleware(logger)
+    //don't apply middleware when not in the browser
+    typeof window != 'undefined' ? applyMiddleware(logger) : f => f
   )(createStore);
   const store = createFinalStore(reducer, initialState);
   return store;

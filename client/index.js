@@ -114,6 +114,7 @@ window.onload = function() {
         const hamX = currentState.hamsters.all[currentState.hamsters.username].x;
         const hamY = currentState.hamsters.all[currentState.hamsters.username].x;
         store.dispatch(hamsterActions.setRoom(served.Data));
+        store.dispatch(hamsterActions.setChallenging(''));
         store.dispatch(hamsterActions.clearHamsters());
         store.dispatch(messageActions.clearMessages());
         //send default coods

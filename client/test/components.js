@@ -8,7 +8,6 @@ import { Messages } from '../components/Messages';
 import { RoomButton } from '../components/RoomButton';
 
 test('<App />', (t) => {
-  const room = 'a room!'
   const hamsters = {
     all: {},
     username: '',
@@ -19,7 +18,6 @@ test('<App />', (t) => {
   const messages = {
     list: []
   };
-  const username = 'dummyUsername'
   const wrapper = shallow(<App hamsters={hamsters} messages={messages} />);
   hamsters.room = 'this is a room';
   const wrapperWithRoom = shallow(<App hamsters={hamsters} messages={messages} />);
@@ -50,8 +48,8 @@ test('<ChallengeButtons />', (t) => {
 test('<Messages />', (t) => {
   const messagesPlay = [{ play: true, Add: 'additional info', Id: 'someone', Data: 'data' }];
   const messagesNoPlay = [{ play: false, Add: 'additional info', Id: 'someone', Data: 'data' }];
-  const wrapper = shallow(<Messages messages={messagesPlay} />);
-  const wrapperNoPlay = shallow(<Messages messages={messagesNoPlay} />);
+  const wrapper = shallow(<Messages sock={{}} messages={messagesPlay} />);
+  const wrapperNoPlay = shallow(<Messages sock={{}} messages={messagesNoPlay} />);
   t.equal(wrapper.find('button').length, 2, 'has two buttons for message with "play"');
   t.equal(wrapperNoPlay.find('button').length, 0, 'has no buttons for message without "play"');
   t.end();
