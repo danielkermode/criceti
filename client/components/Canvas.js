@@ -27,6 +27,7 @@ export class Canvas extends Component {
 
       const sendCoords = () => {
         const coords = { x: ham.x, y: ham.y };
+        this.props.updateCoords(this.props.username, coords);
         this.props.sock.send(JSON.stringify({
           id: this.props.sockId,
           data: JSON.stringify(coords),

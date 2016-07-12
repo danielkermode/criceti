@@ -4,7 +4,7 @@ import { Messages } from './Messages';
 import { ChallengeButtons } from './ChallengeButtons';
 import { RoomButton } from './RoomButton';
 import { connect } from 'react-redux';
-import { setChallenging } from '../redux/reducers/hamsters';
+import { setChallenging, updateCoords } from '../redux/reducers/hamsters';
 import { deleteMessage } from '../redux/reducers/messages';
 
 export class App extends Component {
@@ -46,6 +46,7 @@ export class App extends Component {
       <div>
         <h1>Criceti</h1>
         <div>Your hamster is called <b>{this.props.hamsters.username}</b>.</div>
+        <div>Move: <b>W S A D</b></div>
         <hr/>
         <div>
           <input id="input" onKeyDown={this.onEnter} onChange={this.handleChange} type="text" placeholder="Enter message" />
@@ -74,7 +75,7 @@ export class App extends Component {
             username={this.props.hamsters.username}/>
         }
         <br/>
-        <Canvas sock={this.props.sock} bounds={this.props.hamsters.bounds} sockId={this.props.hamsters.id}
+        <Canvas sock={this.props.sock} bounds={this.props.hamsters.bounds} sockId={this.props.hamsters.id} updateCoords={this.props.updateCoords}
         hamsters={this.props.hamsters.all} username={this.props.hamsters.username} startCoords={this.props.hamsters.startCoords}/>
       </div>
     );
@@ -94,6 +95,9 @@ function mapDispatchToProps (dispatch) {
     },
     deleteMessage: (ind) => {
       dispatch(deleteMessage(ind));
+    },
+    updateCoords: (name, coords) => {
+      dispatch(updateCoords(name, coords));
     }
   };
 }

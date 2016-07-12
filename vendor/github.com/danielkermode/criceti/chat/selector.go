@@ -70,6 +70,11 @@ func (s *Server) Selector() {
 					s.broadcastToRoom(joinmsg, current.room, current)
 					current.Write(&Message{msg.Id, current.room, "room"})
 				}
+			case "move":
+				current, i := s.getCurrent(msg.Id)
+				if current != nil {
+					s.broadcastToRoom(&Message{s.ids[i], msg.Data, msg.Type}, current.room, current)
+				}
 			case "username":
 				current, i := s.getCurrent(msg.Id)
 				if current != nil {

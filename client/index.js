@@ -14,6 +14,7 @@ const store = configureStore();
 
 const reactRoot = document.getElementById('app');
 const wsuri = location.protocol.replace('http', 'ws') + '//' + location.host + '/entry';
+const hamUrl = '/resources/hamster-yellow.png';
 let currentState = {};
 let message = '';
 let sock = null;
@@ -101,7 +102,6 @@ window.onload = function() {
           currentState = store.getState();
           const coords = JSON.parse(served.Data);
           if(!currentState.hamsters.all[served.Id] && served.Data) {
-            const hamUrl = '/resources/hamster-yellow.png';
             const newHamster = new Hamster(served.Id, hamUrl, coords.x, coords.y);
             store.dispatch(hamsterActions.addHamster(newHamster));
           } else {
@@ -137,7 +137,9 @@ window.onload = function() {
         currentState = store.getState();
         store.dispatch(hamsterActions.setUsername(served.Data));
         const startCoords = store.getState().hamsters.startCoords;
-        //send default coods
+        const userHamster = new Hamster(served.Data, hamUrl, startCoords.x, startCoords.y);
+        store.dispatch(hamsterActions.addHamster(userHamster))
+        //send default coords
         sock.send(JSON.stringify({
           id: currentState.hamsters.id,
           data: '{ "x": ' + startCoords.x + ', "y": ' + startCoords.y + ' }',
