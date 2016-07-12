@@ -134,6 +134,7 @@ window.onload = function() {
         }));
         break;
       case 'username':
+        console.log('username 123!!!');
         currentState = store.getState();
         store.dispatch(hamsterActions.setUsername(served.Data));
         const startCoords = store.getState().hamsters.startCoords;
