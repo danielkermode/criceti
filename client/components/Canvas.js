@@ -19,48 +19,53 @@ export class Canvas extends Component {
   componentDidMount() {
     let canvas = ReactDOM.findDOMNode(this.refs.myCanvas);
     let ctx = canvas.getContext('2d');
-    const ham = new Hamster(this.props.username, '', this.props.startCoords.x, this.props.startCoords.y);
     this.setState({ ctx, canvas });
+  }
 
-    document.addEventListener("keydown", (e) => {
-      e = e || window.event;
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.username) {
+      const ham = new Hamster(this.props.username, '', this.props.startCoords.x, this.props.startCoords.y);
 
-      const sendCoords = () => {
-        const coords = { x: ham.x, y: ham.y };
-        this.props.updateCoords(this.props.username, coords);
-        this.props.sock.send(JSON.stringify({
-          id: this.props.sockId,
-          data: JSON.stringify(coords),
-          type: 'move'
-        }));
-      };
-      //w: 87 a: 65 s: 83 d: 68
-      //up: 38 down: 40 left: 37 right: 38
-      switch(e.keyCode) {
-        // up arrow
-        case 87:
-          if(ham.y > 6) ham.y -= 6;
-          sendCoords();
-          break;
-        // down arrow
-        case 83:
-          if(ham.y < this.props.bounds.y) ham.y += 6;
-          sendCoords();
-          break;
-        // left arrow
-        case 65:
-          if(ham.x > 6) ham.x -= 6;
-          sendCoords();
-          break;
-        //right arrow
-        case 68:
-          if(ham.x < this.props.bounds.x) ham.x += 6;
-          sendCoords();
-          break;
-        default:
-          //do nothing
-      }
-    }, false);
+      document.addEventListener("keydown", (e) => {
+        e = e || window.event;
+
+        const sendCoords = () => {
+          const coords = { x: ham.x, y: ham.y };
+          this.props.updateCoords(this.props.username, coords);
+          this.props.sock.send(JSON.stringify({
+            id: this.props.sockId,
+            data: JSON.stringify(coords),
+            type: 'move'
+          }));
+        };
+        //w: 87 a: 65 s: 83 d: 68
+        //up: 38 down: 40 left: 37 right: 38
+        switch(e.keyCode) {
+          // up arrow
+          case 87:
+            if(ham.y > 6) ham.y -= 6;
+            sendCoords();
+            break;
+          // down arrow
+          case 83:
+            if(ham.y < this.props.bounds.y) ham.y += 6;
+            sendCoords();
+            break;
+          // left arrow
+          case 65:
+            if(ham.x > 6) ham.x -= 6;
+            sendCoords();
+            break;
+          //right arrow
+          case 68:
+            if(ham.x < this.props.bounds.x) ham.x += 6;
+            sendCoords();
+            break;
+          default:
+            //do nothing
+        }
+      }, false);
+    }
   }
 
   render() {
