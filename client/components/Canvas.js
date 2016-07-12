@@ -12,7 +12,8 @@ export class Canvas extends Component {
     super(props);
     this.state = {
       ctx: null,
-      canvas: null
+      canvas: null,
+      added: false
     };
   }
 
@@ -23,7 +24,7 @@ export class Canvas extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.username) {
+    if(nextProps.username && !this.state.added) {
       const ham = new Hamster(this.props.username, '', this.props.startCoords.x, this.props.startCoords.y);
 
       document.addEventListener("keydown", (e) => {
@@ -65,6 +66,7 @@ export class Canvas extends Component {
             //do nothing
         }
       }, false);
+      this.setState({ added: true })
     }
   }
 
