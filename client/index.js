@@ -112,7 +112,7 @@ window.onload = function() {
       case 'room':
         currentState = store.getState();
         const hamX = currentState.hamsters.all[currentState.hamsters.username].x;
-        const hamY = currentState.hamsters.all[currentState.hamsters.username].x;
+        const hamY = currentState.hamsters.all[currentState.hamsters.username].y;
         store.dispatch(hamsterActions.setRoom(served.Data));
         store.dispatch(hamsterActions.setChallenging(''));
         store.dispatch(hamsterActions.clearHamsters());

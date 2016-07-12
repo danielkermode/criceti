@@ -25,35 +25,36 @@ export class Canvas extends Component {
     document.addEventListener("keydown", (e) => {
       e = e || window.event;
 
-      const sendCoods = () => {
-        const coods = { x: ham.x, y: ham.y };
+      const sendCoords = () => {
+        const coords = { x: ham.x, y: ham.y };
         this.props.sock.send(JSON.stringify({
           id: this.props.sockId,
-          data: JSON.stringify(coods),
+          data: JSON.stringify(coords),
           type: 'move'
         }));
       };
-
+      //w: 87 a: 65 s: 83 d: 68
+      //up: 38 down: 40 left: 37 right: 38
       switch(e.keyCode) {
         // up arrow
-        case 38:
+        case 87:
           if(ham.y > 6) ham.y -= 6;
-          sendCoods();
+          sendCoords();
           break;
         // down arrow
-        case 40:
+        case 83:
           if(ham.y < this.props.bounds.y) ham.y += 6;
-          sendCoods();
+          sendCoords();
           break;
         // left arrow
-        case 37:
+        case 65:
           if(ham.x > 6) ham.x -= 6;
-          sendCoods();
+          sendCoords();
           break;
         //right arrow
-        case 39:
+        case 68:
           if(ham.x < this.props.bounds.x) ham.x += 6;
-          sendCoods();
+          sendCoords();
           break;
         default:
           //do nothing

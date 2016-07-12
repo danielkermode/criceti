@@ -5,8 +5,10 @@ import createLogger from 'redux-logger';
 export default function(initialState) {
   const logger = createLogger();
   const createFinalStore = compose(
-    //don't apply middleware when not in the browser
-    typeof window != 'undefined' ? applyMiddleware(logger) : f => f
+    // redux dev tools
+    (typeof window != 'undefined' && window.devToolsExtension) ?
+    window.devToolsExtension() :
+    f => f
   )(createStore);
   const store = createFinalStore(reducer, initialState);
   return store;

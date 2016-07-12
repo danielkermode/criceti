@@ -11,7 +11,7 @@ const initialState = {
   room: '',
   id: '',
   challenging: '',
-  startCoords: { x: getRandomInt(6, bounds.x), y: getRandomInt(6, bounds.y) }
+  startCoords: { x: getRandomInt(6, bounds.x - 50), y: getRandomInt(6, bounds.y - 50) }
 };
 
 export const ADD_HAMSTER = 'hamsters/ADD_HAMSTER';
