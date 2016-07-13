@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from './components/App';
+import ReconnectingWebSocket from './lib/reconnecting-websocket.js';
 import Hamster from './lib/Hamster';
 import configureStore from './redux/store';
 import { Provider } from 'react-redux';
@@ -36,7 +37,7 @@ function sendDummy() {
 setInterval(sendDummy, 50000);
 
 window.onload = function() {
-  sock = new WebSocket(wsuri);
+  sock = new ReconnectingWebSocket(wsuri);
   //rerender so App has access to socket now
   ReactDOM.render(
     <Provider store={store}>
@@ -45,16 +46,16 @@ window.onload = function() {
     reactRoot
   );
 
-  sock.onopen = () => {
+  sock.onopen = function() {
     console.log('connected to ' + wsuri);
 
   };
 
-  sock.onclose = (e) => {
+  sock.onclose = function(e) {
     console.log('connection closed (' + e.code + ')');
   };
 
-  sock.onmessage = (e) => {
+  sock.onmessage = function(e) {
     const served = JSON.parse(e.data);
     switch(served.Type) {
       case 'busy':
