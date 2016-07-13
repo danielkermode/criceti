@@ -15,7 +15,9 @@ function Hamster(name, imgUrl, x, y) {
 
 Hamster.prototype.draw = function(ctx) {
   if(this.loaded) {
+    ctx.imageSmoothingEnabled = false;
     ctx.font = '7px Georgia';
+    ctx.fillStyle = "white";
     ctx.fillText(this.name, this.x, this.y - 3);
 
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
@@ -24,6 +26,7 @@ Hamster.prototype.draw = function(ctx) {
       // execute drawImage statements here
       ctx.imageSmoothingEnabled = false;
       ctx.font = '7px Georgia';
+      ctx.fillStyle = "white";
       ctx.fillText(this.name, this.x, this.y - 3);
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
       this.loaded = true;

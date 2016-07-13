@@ -15,8 +15,11 @@ export class RoomQuestion extends Component {
     return (
     <div>
     {Object.keys(this.props.hamsters.all).length > 1 && this.props.hamsters.aloneTime ?
-      <span>Your alone time has been sabotaged! Kindly tell your "friend" to leave.</span> :
-      <span>{this.props.questions.list[this.props.questions.activeQuestion]}</span>
+      <span>You still have a visitor.</span> :
+      <span>
+        <b>{this.props.room} ponders:</b> &nbsp;
+        {this.props.questions.list[this.props.questions.activeQuestion]}
+      </span>
     }
     </div>
     );

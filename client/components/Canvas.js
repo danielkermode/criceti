@@ -92,11 +92,13 @@ export class Canvas extends Component {
         hams[username].canChallenge = potentialHams;
       }
     }
+    const bg = this.props.room ? 'url("/resources/house.jpg")' : 'url("/resources/space.png")';
     return (
       <canvas ref="myCanvas" style={{
         border: '1px solid #000000',
         width: this.props.bounds.x * 3 + 'px',
-        height: this.props.bounds.y * 3 + 'px'
+        height: this.props.bounds.y * 3 + 'px',
+        background: bg
       }}/>
     );
   }

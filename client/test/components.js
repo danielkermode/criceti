@@ -60,12 +60,12 @@ test('<RoomButton />', (t) => {
   const room = 'hi this is room';
   const wrapper = shallow(<RoomButton sock={{}} room={room} />);
   t.equal(wrapper.find('button').length, 1, 'has one button');
-  t.equal(wrapper.find('h4').text(), 'In room: ' + room, 'renders correct text for given room');
+  t.equal(wrapper.find('h4').text(), 'In the house of ' + room, 'renders correct text for given room');
   t.end();
 });
 
 test('<RoomQuestion />', (t) => {
-  const sabotaged = 'Your alone time has been sabotaged! Kindly tell your "friend" to leave.';
+  const sabotaged = 'You still have a visitor.';
   const hamsters = {
     all: {
       hamtaro: 'yo'
@@ -78,9 +78,10 @@ test('<RoomQuestion />', (t) => {
     activeQuestion: 0
 
   };
-
-  const wrapper = shallow(<RoomQuestion questions={questions} hamsters={hamsters} addQuestions={f => f} />);
-  t.equal(wrapper.find('span').text(), questions.list[0], 'renders correct text for single hamster alone time');
+  const room = 'ham';
+  const wrapper = shallow(<RoomQuestion room={room} questions={questions} hamsters={hamsters} addQuestions={f => f} />);
+  t.ok(wrapper.find('span').text().includes(room), 'renders room in text');
+  t.ok(wrapper.find('span').text().includes(questions.list[0]), 'renders question in text');
   hamsters.all.pikachu = 'pikaaa!';
   const wrapperSabotaged = shallow(<RoomQuestion questions={questions} hamsters={hamsters} addQuestions={f => f} />);
   t.equal(wrapperSabotaged.find('span').text(), sabotaged, 'renders correct text for interrupted alone time');

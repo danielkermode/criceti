@@ -22,11 +22,11 @@ export class RoomButton extends Component {
   render() {
     return (
     <div>
-      <h4>In room: <b>{this.props.room}</b></h4>
+      <h4>In the house of <b>{this.props.room}</b></h4>
       <button onClick={this.act('', 'changeRoom')} className="btn btn-default">
         Back to main room
       </button>
-      <RoomQuestionContainer sock={this.props.sock} />
+      <RoomQuestionContainer room={this.props.room} sock={this.props.sock} />
     </div>
     );
   }

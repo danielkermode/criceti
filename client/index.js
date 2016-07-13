@@ -68,7 +68,7 @@ window.onload = function() {
         store.dispatch(hamsterActions.setChallenging(''));
         break;
       case 'challenge':
-        message = { Id: served.Id, Add: 'has asked to play with you!', play: true };
+        message = { Id: served.Id, Add: 'has asked you back to their house to play!', play: true };
         store.dispatch(messageActions.addMessage(message));
         store.dispatch(hamsterActions.setChallenging(served.Id));
         break;

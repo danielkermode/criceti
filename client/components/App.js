@@ -80,8 +80,15 @@ export class App extends Component {
             username={this.props.hamsters.username}/>
         }
         <br/>
-        <Canvas sock={this.props.sock} bounds={this.props.hamsters.bounds} sockId={this.props.hamsters.id} updateCoords={this.props.updateCoords}
-        hamsters={this.props.hamsters.all} username={this.props.hamsters.username} startCoords={this.props.hamsters.startCoords}/>
+        <Canvas
+          sock={this.props.sock}
+          bounds={this.props.hamsters.bounds}
+          sockId={this.props.hamsters.id}
+          updateCoords={this.props.updateCoords}
+          hamsters={this.props.hamsters.all}
+          room={this.props.hamsters.room}
+          username={this.props.hamsters.username}
+          startCoords={this.props.hamsters.startCoords}/>
       </div>
     );
   }

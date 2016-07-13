@@ -36,12 +36,12 @@ export class ChallengeButtons extends Component {
       {!this.props.challenging ?
       <div>
         <button onClick={this.act(this.props.username, 'changeRoom')} className="btn btn-default">
-          Play with yourself!
+          Go to your house!
         </button>
         {ham && ham.canChallenge &&
           ham.canChallenge.map((hamster, key) => {
             return (<button key={key} onClick={this.act(hamster.name, 'challenge')}
-            className="btn btn-default">Play with {hamster.name}!</button>);
+            className="btn btn-default">Invite {hamster.name} to your house!</button>);
           })
         }
       </div> :
