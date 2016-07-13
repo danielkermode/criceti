@@ -61,7 +61,7 @@ export class Messages extends Component {
                   No grazie
                 </button>
               </div>);
-            }
+            };
             return (
             message.Add ?
             (<div key={key}>

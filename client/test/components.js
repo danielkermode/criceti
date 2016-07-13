@@ -6,6 +6,7 @@ import { Canvas } from '../components/Canvas';
 import { ChallengeButtons } from '../components/ChallengeButtons';
 import { Messages } from '../components/Messages';
 import { RoomButton } from '../components/RoomButton';
+import { RoomQuestion } from '../components/RoomQuestion';
 
 test('<App />', (t) => {
   const hamsters = {
@@ -60,5 +61,28 @@ test('<RoomButton />', (t) => {
   const wrapper = shallow(<RoomButton sock={{}} room={room} />);
   t.equal(wrapper.find('button').length, 1, 'has one button');
   t.equal(wrapper.find('h4').text(), 'In room: ' + room, 'renders correct text for given room');
+  t.end();
+});
+
+test('<RoomQuestion />', (t) => {
+  const sabotaged = 'Your alone time has been sabotaged! Kindly tell your "friend" to leave.';
+  const hamsters = {
+    all: {
+      hamtaro: 'yo'
+    },
+    aloneTime: true
+  };
+
+  const questions = {
+    list: ['where?'],
+    activeQuestion: 0
+
+  };
+
+  const wrapper = shallow(<RoomQuestion questions={questions} hamsters={hamsters} addQuestions={f => f} />);
+  t.equal(wrapper.find('span').text(), questions.list[0], 'renders correct text for single hamster alone time');
+  hamsters.all.pikachu = 'pikaaa!';
+  const wrapperSabotaged = shallow(<RoomQuestion questions={questions} hamsters={hamsters} addQuestions={f => f} />);
+  t.equal(wrapperSabotaged.find('span').text(), sabotaged, 'renders correct text for interrupted alone time');
   t.end();
 });

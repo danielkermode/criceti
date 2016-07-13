@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from './components/App';
-import ReconnectingWebSocket from './lib/reconnecting-websocket.min.js';
 import Hamster from './lib/Hamster';
 import configureStore from './redux/store';
 import { Provider } from 'react-redux';
 import * as hamsterActions from './redux/reducers/hamsters';
 import * as messageActions from './redux/reducers/messages';
+import * as questionActions from './redux/reducers/questions';
 //redux setup
 const store = configureStore();
 
@@ -36,7 +36,7 @@ function sendDummy() {
 setInterval(sendDummy, 50000);
 
 window.onload = function() {
-  sock = new ReconnectingWebSocket(wsuri);
+  sock = new WebSocket(wsuri);
   //rerender so App has access to socket now
   ReactDOM.render(
     <Provider store={store}>
@@ -45,16 +45,16 @@ window.onload = function() {
     reactRoot
   );
 
-  sock.onopen = function() {
+  sock.onopen = () => {
     console.log('connected to ' + wsuri);
 
-  }
+  };
 
-  sock.onclose = function(e) {
+  sock.onclose = (e) => {
     console.log('connection closed (' + e.code + ')');
-  }
+  };
 
-  sock.onmessage = function(e) {
+  sock.onmessage = (e) => {
     const served = JSON.parse(e.data);
     switch(served.Type) {
       case 'busy':
@@ -74,7 +74,7 @@ window.onload = function() {
       case 'chat':
         store.dispatch(messageActions.addMessage(served));
         break;
-      case 'connect':
+      case 'connect': {
         message = { Id: served.Id, Add: 'has connected.' };
         store.dispatch(messageActions.addMessage(message));
         currentState = store.getState();
@@ -87,6 +87,7 @@ window.onload = function() {
           }));
         }
         break;
+      }
       case 'disconnect':
         message = { Id: served.Id, Add: 'has disconnected.' };
         store.dispatch(messageActions.addMessage(message));
@@ -97,7 +98,7 @@ window.onload = function() {
         store.dispatch(messageActions.addMessage(message));
         store.dispatch(hamsterActions.deleteHamster(served.Id));
         break;
-      case 'move':
+      case 'move': {
         if(served.Id) {
           currentState = store.getState();
           const coords = JSON.parse(served.Data);
@@ -109,20 +110,37 @@ window.onload = function() {
           }
         }
         break;
-      case 'room':
+      }
+      case 'room': {
         currentState = store.getState();
-        const hamX = currentState.hamsters.all[currentState.hamsters.username].x;
-        const hamY = currentState.hamsters.all[currentState.hamsters.username].y;
+        const prevHam = currentState.hamsters.all[currentState.hamsters.username];
         store.dispatch(hamsterActions.setRoom(served.Data));
+
+        // if room is own room, set active question and send to other hamsters
+        if(store.getState().hamsters.username === served.Data) {
+          const max = store.getState().questions.list.length;
+          sock.send(JSON.stringify({
+            id: currentState.hamsters.id,
+            data: Math.floor(Math.random() * max).toString(),
+            type: 'question'
+          }));
+        }
+
         store.dispatch(hamsterActions.setChallenging(''));
         store.dispatch(hamsterActions.clearHamsters());
         store.dispatch(messageActions.clearMessages());
+        const newHam = new Hamster(prevHam.name, hamUrl, prevHam.x, prevHam.y);
+        store.dispatch(hamsterActions.addHamster(newHam));
         //send default coods
         sock.send(JSON.stringify({
           id: currentState.hamsters.id,
-          data: '{ "x":' + hamX + ', "y": '+ hamY + ' }',
+          data: '{ "x":' + newHam.x + ', "y": '+ newHam.y + ' }',
           type: 'move'
         }));
+        break;
+      }
+      case 'question':
+        store.dispatch(questionActions.setQuestion(parseInt(served.Data)));
         break;
       case 'setId':
         store.dispatch(hamsterActions.setId(served.Id));
@@ -133,12 +151,12 @@ window.onload = function() {
           type: 'username'
         }));
         break;
-      case 'username':
+      case 'username': {
         currentState = store.getState();
         store.dispatch(hamsterActions.setUsername(served.Data));
         const startCoords = store.getState().hamsters.startCoords;
         const userHamster = new Hamster(served.Data, hamUrl, startCoords.x, startCoords.y);
-        store.dispatch(hamsterActions.addHamster(userHamster))
+        store.dispatch(hamsterActions.addHamster(userHamster));
         //send default coords
         sock.send(JSON.stringify({
           id: currentState.hamsters.id,
@@ -146,6 +164,7 @@ window.onload = function() {
           type: 'move'
         }));
         break;
+      }
       default:
         console.warn('No specified action for message type ' + served.Type);
     }

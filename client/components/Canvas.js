@@ -41,6 +41,7 @@ export class Canvas extends Component {
         e = e || window.event;
         //w: 87 a: 65 s: 83 d: 68
         //up: 38 down: 40 left: 37 right: 38
+        //check if input is focussed; if so don't move the hamster
         const input = document.getElementById('input');
         if(input != document.activeElement) {
           switch(e.keyCode) {
@@ -70,7 +71,7 @@ export class Canvas extends Component {
         }
       }, false);
 
-      this.setState({ added: true })
+      this.setState({ added: true });
     }
   }
 
@@ -81,7 +82,7 @@ export class Canvas extends Component {
       let potentialHams = [];
       this.state.ctx.clearRect(0, 0, this.state.canvas.width, this.state.canvas.height);
       Object.keys(hams).forEach(id => {
-        hams[id].draw(this.state.ctx)
+        hams[id].draw(this.state.ctx);
         //if player hamster is colliding with other hamsters, add them to potential challenge targets
         if(id != username && hams[username] && hams[username].checkBounds(hams[id])) {
           potentialHams.push(hams[id]);

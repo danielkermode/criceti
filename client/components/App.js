@@ -4,7 +4,7 @@ import { Messages } from './Messages';
 import { ChallengeButtons } from './ChallengeButtons';
 import { RoomButton } from './RoomButton';
 import { connect } from 'react-redux';
-import { setChallenging, updateCoords } from '../redux/reducers/hamsters';
+import { setChallenging, updateCoords, toggleAloneTime } from '../redux/reducers/hamsters';
 import { deleteMessage } from '../redux/reducers/messages';
 
 export class App extends Component {
@@ -21,12 +21,15 @@ export class App extends Component {
   }
 
   sendMessage = () => {
-    this.props.sock.send(JSON.stringify({
-      id: this.props.hamsters.id,
-      data: this.state.message,
-      type: 'chat'
-    }));
-    document.getElementById('input').value = '';
+    if(this.state.message) {
+      this.props.sock.send(JSON.stringify({
+        id: this.props.hamsters.id,
+        data: this.state.message,
+        type: 'chat'
+      }));
+      document.getElementById('input').value = '';
+      this.setState({ message: '' });
+    }
   };
 
   handleChange = (e) => {
@@ -64,11 +67,13 @@ export class App extends Component {
           <ChallengeButtons
             challenging={this.props.hamsters.challenging}
             setChallenging={this.props.setChallenging}
+            toggleAloneTime={this.props.toggleAloneTime}
             sock={this.props.sock}
             sockId={this.props.hamsters.id}
             ham={ham}
             username={this.props.hamsters.username}/> :
           <RoomButton
+            toggleAloneTime={this.props.toggleAloneTime}
             sock={this.props.sock}
             sockId={this.props.hamsters.id}
             room={this.props.hamsters.room}
@@ -98,6 +103,9 @@ function mapDispatchToProps (dispatch) {
     },
     updateCoords: (name, coords) => {
       dispatch(updateCoords(name, coords));
+    },
+    toggleAloneTime: (toggle) => {
+      dispatch(toggleAloneTime(toggle));
     }
   };
 }

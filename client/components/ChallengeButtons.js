@@ -15,7 +15,10 @@ export class ChallengeButtons extends Component {
     return (e) => {
       if(type === 'challenge') {
         this.props.setChallenging(name);
+      } else if(type === 'changeRoom') {
+        this.props.toggleAloneTime(true);
       }
+
       const toSend = {
         id: this.props.sockId,
         data: name,

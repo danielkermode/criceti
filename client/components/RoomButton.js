@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { RoomQuestionContainer } from './RoomQuestion';
 
 export class RoomButton extends Component {
   static propTypes = {
@@ -8,6 +9,7 @@ export class RoomButton extends Component {
   act = (name, type) => {
     const send = this.props.sock.send;
     return (e) => {
+      this.props.toggleAloneTime(false);
       const toSend = {
         id: this.props.sockId,
         data: name,
@@ -24,6 +26,7 @@ export class RoomButton extends Component {
       <button onClick={this.act('', 'changeRoom')} className="btn btn-default">
         Back to main room
       </button>
+      <RoomQuestionContainer sock={this.props.sock} />
     </div>
     );
   }

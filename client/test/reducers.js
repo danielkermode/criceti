@@ -2,6 +2,7 @@
 import test from 'tape';
 import * as hamster from '../redux/reducers/hamsters';
 import * as message from '../redux/reducers/messages';
+import * as question from '../redux/reducers/questions';
 import configureStore from '../redux/store';
 
 test('hamster reducer', (t) => {
@@ -27,19 +28,22 @@ test('hamster reducer', (t) => {
 
   const username = 'dan';
   store.dispatch(hamster.setUsername(username));
-  t.equal(store.getState().hamsters.username, username, 'setUsername works');
+  t.equal(store.getState().hamsters.username, username, 'setUsername works intuitively');
 
   const room = 'a room';
   store.dispatch(hamster.setRoom(room));
-  t.equal(store.getState().hamsters.room, room, 'setRoom works');
+  t.equal(store.getState().hamsters.room, room, 'setRoom works intuitively');
 
   const id = 'an id';
   store.dispatch(hamster.setId(id));
-  t.equal(store.getState().hamsters.id, id, 'setId works');
+  t.equal(store.getState().hamsters.id, id, 'setId works intuitively');
 
   const challenging = 'pikachu';
   store.dispatch(hamster.setChallenging(challenging));
-  t.equal(store.getState().hamsters.challenging, challenging, 'setChallenging works');
+  t.equal(store.getState().hamsters.challenging, challenging, 'setChallenging works intuitively');
+
+  store.dispatch(hamster.toggleAloneTime(true));
+  t.ok(store.getState().hamsters.aloneTime, 'toggleAloneTime works intuitively');
 
   t.end();
 });
@@ -62,6 +66,28 @@ test('message reducer', (t) => {
   store.dispatch(message.addMessage(messageOne));
   store.dispatch(message.clearMessages());
   t.equal(store.getState().messages.list.length, 0, 'clearMessages clears all messages');
+
+  t.end();
+});
+
+test('questions reducer', (t) => {
+  const store = configureStore();
+  const questions = ['what?', 'why?', 'how?'];
+  store.dispatch({
+    questions,
+    type: question.ADD_QUESTIONS_SUCCESS
+  });
+  t.deepEqual(store.getState().questions.list, questions, 'adds questions correctly on success');
+
+  const err = new Error('bad stuff happened');
+  store.dispatch({
+    err,
+    type: question.ADD_QUESTIONS_ERROR
+  });
+  t.deepEqual(store.getState().questions.error, err, 'adds an error correctly on failure');
+
+  store.dispatch(question.setQuestion(10));
+  t.equal(store.getState().questions.activeQuestion, 10, 'setQuestion works intuitively')
 
   t.end();
 });

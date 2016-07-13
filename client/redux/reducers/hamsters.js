@@ -11,7 +11,8 @@ const initialState = {
   room: '',
   id: '',
   challenging: '',
-  startCoords: { x: getRandomInt(6, bounds.x - 50), y: getRandomInt(6, bounds.y - 50) }
+  startCoords: { x: getRandomInt(6, bounds.x - 50), y: getRandomInt(6, bounds.y - 50) },
+  aloneTime: false
 };
 
 export const ADD_HAMSTER = 'hamsters/ADD_HAMSTER';
@@ -78,6 +79,14 @@ export const setChallenging = (name) => {
   };
 };
 
+export const TOGGLE_ALONE_TIME = 'hamsters/TOGGLE_ALONE_TIME';
+export const toggleAloneTime = (toggle) => {
+  return {
+    toggle,
+    type: TOGGLE_ALONE_TIME
+  };
+};
+
 /* hamsters reducer */
 export const hamsters = (state = initialState, action) => {
   let newHamsters = state.all;
@@ -125,6 +134,11 @@ export const hamsters = (state = initialState, action) => {
       return {
         ...state,
         challenging: action.name
+      };
+    case TOGGLE_ALONE_TIME:
+      return {
+        ...state,
+        aloneTime: action.toggle
       };
 
     default:
