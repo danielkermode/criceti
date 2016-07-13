@@ -33,7 +33,7 @@ export const setQuestion = (num) => {
     num,
     type: SET_QUESTION
   };
-}
+};
 
 /* questions reducer */
 export const questions = (state = initialState, action) => {

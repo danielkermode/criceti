@@ -13,7 +13,7 @@ test('hamster reducer', (t) => {
   store.dispatch(hamster.addHamster(ham));
   t.deepEqual(store.getState().hamsters.all.hamtaro, ham, 'addHamster correctly adds a hamster object');
 
-  const coords = { x: 12, y: 12 }
+  const coords = { x: 12, y: 12 };
   store.dispatch(hamster.updateCoords(ham.name, coords));
   t.equal(store.getState().hamsters.all.hamtaro.x, coords.x, 'updateCoords updates x coordinate of hamster');
   t.equal(store.getState().hamsters.all.hamtaro.y, coords.y, 'updateCoords updates y coordinate of hamster');
@@ -87,7 +87,7 @@ test('questions reducer', (t) => {
   t.deepEqual(store.getState().questions.error, err, 'adds an error correctly on failure');
 
   store.dispatch(question.setQuestion(10));
-  t.equal(store.getState().questions.activeQuestion, 10, 'setQuestion works intuitively')
+  t.equal(store.getState().questions.activeQuestion, 10, 'setQuestion works intuitively');
 
   t.end();
 });

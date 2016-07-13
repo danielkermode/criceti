@@ -1,14 +1,19 @@
 {
   "parser": "babel-eslint",
   "parserOptions": {
-    "sourceType": "module"
+    "ecmaVersion": 7,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
   "rules": {
     "strict": 0,
     "no-unused-vars": 0,
     "no-console": 0,
     "no-undef": 0,
-    "semi": 2
+    "semi": 2,
+    "comma-dangle": ["error", "never"]
   },
   "extends": "eslint:recommended"
 }

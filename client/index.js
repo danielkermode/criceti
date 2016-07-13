@@ -171,7 +171,7 @@ window.onload = function() {
     // scroll message div to bottom, to see new messages immediately
     const elem = document.getElementById('message');
     elem.scrollTop = elem.scrollHeight;
-  }
+  };
 
   ReactDOM.render(
     <Provider store={store}>

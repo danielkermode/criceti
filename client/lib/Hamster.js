@@ -2,8 +2,8 @@ function Hamster(name, imgUrl, x, y) {
   this.name = name || '';
   this.x = x || 0;
   this.y = y || 0;
-  this.width = 21
-  this.height = 22
+  this.width = 21;
+  this.height = 22;
 
   const img = new Image();   // Create new img element
   img.src = imgUrl;
