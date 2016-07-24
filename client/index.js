@@ -11,8 +11,6 @@ import * as questionActions from './redux/reducers/questions';
 //redux setup
 const store = configureStore();
 
-//store.dispatch(hamsterActions.addHamster(new Hamster('yo')));
-
 const reactRoot = document.getElementById('app');
 const wsuri = location.protocol.replace('http', 'ws') + '//' + location.host + '/entry';
 const hamUrl = '/resources/hamster-yellow.png';
@@ -154,9 +152,10 @@ window.onload = function() {
         break;
       case 'username': {
         currentState = store.getState();
-        store.dispatch(hamsterActions.setUsername(served.Data));
+        const decoded = decodeURIComponent(served.Data);
+        store.dispatch(hamsterActions.setUsername(decoded));
         const startCoords = store.getState().hamsters.startCoords;
-        const userHamster = new Hamster(served.Data, hamUrl, startCoords.x, startCoords.y);
+        const userHamster = new Hamster(decoded, hamUrl, startCoords.x, startCoords.y);
         store.dispatch(hamsterActions.addHamster(userHamster));
         //send default coords
         sock.send(JSON.stringify({
