@@ -152,10 +152,10 @@ window.onload = function() {
         break;
       case 'username': {
         currentState = store.getState();
-        const decoded = decodeURIComponent(served.Data);
-        store.dispatch(hamsterActions.setUsername(decoded));
+        const res = served.Data;
+        store.dispatch(hamsterActions.setUsername(res));
         const startCoords = store.getState().hamsters.startCoords;
-        const userHamster = new Hamster(decoded, hamUrl, startCoords.x, startCoords.y);
+        const userHamster = new Hamster(res, hamUrl, startCoords.x, startCoords.y);
         store.dispatch(hamsterActions.addHamster(userHamster));
         //send default coords
         sock.send(JSON.stringify({
